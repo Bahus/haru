@@ -45,7 +45,9 @@
 				</Env>
 				<Session>
 					<Handler>
-						<type>none</type>
+						<None>
+							<__construct></__construct>
+						</None>
 					</Handler>
 				</Session>
 				<TemplatesEngine>

@@ -5,7 +5,6 @@ set_include_path(
     realpath(dirname(__FILE__) . '/../classes') . PATH_SEPARATOR .
     get_include_path()  // trunk version of phing classes should take precedence
 );
-
 require_once( 'phing/BuildFileTest.php');
 require_once('phing/Phing.php');
 

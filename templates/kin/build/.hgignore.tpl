@@ -1,3 +1,5 @@
-tmp/*
-bin/*
-properties/extends/users/*
+syntax: regexp
+^data/config*
+^tmp/*
+^bin/*
+^properties/extends/users/*

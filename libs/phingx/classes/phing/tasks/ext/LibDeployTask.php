@@ -281,10 +281,14 @@ class LibDeployTask extends Task
 		$toDir = trim( $toDir );
 		$toDir = $this->_geFullPath( $toDir );
 
+		$returnProp = 'libdeploy.git.return';
+		$outputProp = 'libdeploy.git.output';
+
 		if ( file_exists( $toDir ) && is_dir( $toDir ) && file_exists( $toDir . '/.hg' ) )
 		{
 			$branchSuffix = empty( $branch ) ? '' : sprintf( ' -r %s', $branch );
-			$command = sprintf( 'cd %s; %s pull -u %s; cd -; ', $toDir, $bin, $branchSuffix );
+			$command = sprintf( '%s pull -u %s', $bin, $branchSuffix );
+			$this->_exec( $command, $returnProp, $outputProp, $toDir );
 		}
 		else
 		{
@@ -293,6 +297,7 @@ class LibDeployTask extends Task
 			{
 				$command = $command . ' -r ' . $branch;
 			}
+			$this->_exec( $command, $returnProp, $outputProp );
 		}
 
 		$msg = sprintf( "\tDeploy by mercurial complete" );

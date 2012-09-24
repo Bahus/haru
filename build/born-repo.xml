@@ -47,7 +47,7 @@
 			</then>
 			<else>
 				<propertyprompt propertyName="born-repo-properties.lib.type"
-					defaultValue="git" promptText="Enter your lib repos type (git|svn)" />
+					defaultValue="git" promptText="Enter your lib repos type (git|svn|hg)" />
 			</else>
 		</if>
 		<if>
@@ -70,6 +70,12 @@
 				<equals arg1="${born-repo-properties.lib.type}" arg2="svn" />
 				<then>
 					<property name="born-repo-properties.lib.tag" value="trunk" />
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${born-repo-properties.lib.type}" arg2="hg" />
+				<then>
+					<property name="born-repo-properties.lib.tag" value="default" />
 				</then>
 			</elseif>
 			<else>
@@ -129,11 +135,25 @@
 				</then>
 			</elseif>
 			<elseif>
-				<equals arg1="${born-repo-properties.high-build.type}" arg2="svn" />
+				<equals arg1="${born-repo-properties.high-build.type}" arg2="hg" />
 				<then>
-					<!-- TODO: realize hg init -->
+					<exec command="hg init ${born-properties.paths.root}/build" 
+						dir="${born-properties.paths.root}/build"
+						passthru="true" checkreturn="true"
+					/>
+					<copy file="${project.basedir}/templates/born-repo/build/.hg/hgrc.tpl"
+						tofile="${born-properties.paths.root}/build/.hg/hgrc"
+					>
+						<filterchain>
+							<expandproperties />
+						</filterchain>
+					</copy>
+					<exportproperties targetfile="output.props" />
 				</then>
 			</elseif>
+			<else>
+				<fail>Unknown repos type (${born-repo-properties.lib.type})</fail>
+			</else>
 		</if>
 	</target>
 	
@@ -157,6 +177,25 @@
 						passthru="true" checkreturn="true" level="info" />
 				</then>
 			</elseif>
+			<elseif>
+				<equals arg1="${born-repo-properties.high-build.type}" arg2="hg" />
+				<then>					
+					<exec command="hg init ${born-repo-project-repos-init.lib.dst}" 
+						dir="${born-repo-project-repos-init.lib.dst}"
+						passthru="true" checkreturn="true" level="info"
+					/>
+					<copy file="${project.basedir}/templates/born-repo/lib/.hg/hgrc.tpl"
+						tofile="${born-repo-project-repos-init.lib.dst}/.hg/hgrc"
+					>
+						<filterchain>
+							<expandproperties />
+						</filterchain>
+					</copy>
+				</then>
+			</elseif>
+			<else>
+				<fail>Unknown repos type (${born-repo-properties.lib.type})</fail>
+			</else>
 		</if>
 	</target>
 	

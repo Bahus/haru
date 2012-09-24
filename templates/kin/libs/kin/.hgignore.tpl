@@ -1,2 +1,3 @@
-data/config*
-scripts/*
+syntax: regexp
+^data/config*
+^scripts/*

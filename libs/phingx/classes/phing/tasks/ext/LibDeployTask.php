@@ -288,6 +288,9 @@ class LibDeployTask extends Task
 		{
 			$branchSuffix = empty( $branch ) ? '' : sprintf( ' -r %s', $branch );
 			$command = sprintf( '%s pull -u %s', $bin, $branchSuffix );
+
+
+			$this->log( 'Please enter login and password' );
 			$this->_exec( $command, $returnProp, $outputProp, $toDir );
 		}
 		else
@@ -297,6 +300,7 @@ class LibDeployTask extends Task
 			{
 				$command = $command . ' -r ' . $branch;
 			}
+			$this->log( 'Please enter login and password' );
 			$this->_exec( $command, $returnProp, $outputProp );
 		}
 

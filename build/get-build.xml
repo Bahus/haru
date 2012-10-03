@@ -30,6 +30,7 @@
                     <elseif>
                         <equals arg1="${get-build.deploy.vcs.type}" arg2="hg" />
                         <then>
+                        	<echo>Please enter login and password:</echo>
                             <exec
                                 command="hg clone ${get-build.deploy.vcs.src} ${get-build.deploy.dst}"
                                 passthru="true" checkreturn="true" level="info" />
@@ -63,7 +64,7 @@
             </then>
             <else>
                 <propertyprompt propertyName="get-build.deploy.root"
-			promptText="Enter project path" />
+			promptText="Enter, please, a full path - a directory name, where the project will be installed" />
 		</else>
         </if>
         <property name="get-build.deploy.dst" value="${get-build.deploy.root}/build" />
@@ -75,7 +76,7 @@
             </then>
             <else>
                 <propertyprompt propertyName="get-build.deploy.vcs.src"
-                    promptText="Enter build url" />
+                    promptText="Enter, please, SVN|GIT url, where I could find build files" />
             </else>
         </if>
 
@@ -86,7 +87,7 @@
             </then>
             <else>
                 <propertyprompt propertyName="get-build.deploy.vcs.type"
-			defaultValue="svn" promptText="Enter VCS type" />
+			defaultValue="svn" promptText="I'm just a stupid robot, so I need to know, what type of version control system you use for link above" />
             </else>
         </if>
 			        <if>

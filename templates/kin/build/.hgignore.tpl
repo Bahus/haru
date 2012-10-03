@@ -1,4 +1,4 @@
-tmp/*
-bin/*
-data/config*
-properties/extends/users/*
+^data/config*
+^tmp/*
+^bin/*
+^properties/extends/users/*

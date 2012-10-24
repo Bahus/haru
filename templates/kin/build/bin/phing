@@ -7,5 +7,11 @@ echo $DIRNAME/env
 # fill env with our data
 . $DIRNAME/env
 
-echo "$PHING_BIN" -f "$HARU_DIR/build.xml" -propertyfile "$BUILD_DIR/bin/prop" $@
-"$PHING_BIN" -f "$HARU_DIR/build.xml" -propertyfile "$BUILD_DIR/bin/prop" $@
+STDBUF=$(which stdbuf)
+RET=$?
+if [ $RET -eq 0 ]; then
+    PHING_BIN="${STDBUF} --output=0 ${PHING_BIN}"
+fi
+
+echo $PHING_BIN -f "$HARU_DIR/build.xml" -propertyfile "$BUILD_DIR/bin/prop" $@
+$PHING_BIN -f "$HARU_DIR/build.xml" -propertyfile "$BUILD_DIR/bin/prop" $@

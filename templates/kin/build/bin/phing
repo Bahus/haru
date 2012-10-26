@@ -7,5 +7,16 @@ echo $DIRNAME/env
 # fill env with our data
 . $DIRNAME/env
 
-echo "$PHING_BIN" -f "$HARU_DIR/build.xml" -propertyfile "$BUILD_DIR/bin/prop" $@
-"$PHING_BIN" -f "$HARU_DIR/build.xml" -propertyfile "$BUILD_DIR/bin/prop" $@
+STDBUF=$(which stdbuf)
+RET=$?
+if [ $RET -eq 0 ]; then
+    PHING_BIN="${STDBUF} --output=0 ${PHING_BIN}"
+else    
+    UNAME=$(uname)
+    if [ $UNAME = 'Linux' ]; then
+        echo "\033[01;31mCan not find the utility \"stdbuf\", please install the package \"coreutils\"\033[0m"
+    fi
+fi
+
+echo $PHING_BIN -f "$HARU_DIR/build.xml" -propertyfile "$BUILD_DIR/bin/prop" $@
+$PHING_BIN -f "$HARU_DIR/build.xml" -propertyfile "$BUILD_DIR/bin/prop" $@

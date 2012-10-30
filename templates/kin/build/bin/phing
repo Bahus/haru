@@ -14,7 +14,7 @@ if [ $RET -eq 0 ]; then
 else    
     UNAME=$(uname)
     if [ $UNAME = 'Linux' ]; then
-        echo "\033[01;31mCan not find the utility \"stdbuf\", please install the package \"coreutils\"\033[0m"
+        echo -e "\033[01;31mCan not find the utility \"stdbuf\", please install the package \"coreutils\"\033[0m"
     fi
 fi
 

@@ -14,9 +14,9 @@
 		<if>
 			<istrue value="${use_glue}" />
 			<then>
-				<verboseexec
+				<exec
 					command="${system.bin.php} ${libs.Miao.deploy.dst}/scripts/glue.php"
-					checkreturn="true" />
+					passthru="true" checkreturn="true" level="info" />
 			</then>
 		</if>
 	</target>

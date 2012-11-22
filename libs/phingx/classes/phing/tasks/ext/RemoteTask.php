@@ -12,6 +12,12 @@ class RemoteTask extends Task
 	private $_ips = array();
 
 	/**
+	 * Whether to check the return code.
+	 * @var boolean
+	 */
+	protected $_checkreturn = true;
+
+	/**
 	 *
 	 * @param field_type $host
 	 */
@@ -27,6 +33,18 @@ class RemoteTask extends Task
 	public function setTarget( $target )
 	{
 		$this->_target = $target;
+	}
+
+	/**
+	 * Whether to check the return code.
+	 *
+	 * @param boolean $checkreturn If the return code shall be checked
+	 *
+	 * @return void
+	 */
+	public function setCheckreturn($checkreturn)
+	{
+		$this->_checkreturn = (bool) $checkreturn;
 	}
 
 	public function init()
@@ -77,6 +95,9 @@ class RemoteTask extends Task
 			$obj->setLogoutput( true );
 			$obj->setReturnProperty( $returnProp );
 			$obj->setOutputProperty( $outputProp );
+			$obj->setCheckreturn( $this->_checkreturn );
+			$obj->setPassthru( true );
+			$obj->setLevel( 'info' );
 			$obj->main();
 		}
 	}

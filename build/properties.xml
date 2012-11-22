@@ -40,7 +40,7 @@
 		 		
 		<echo>Load all properties and create file (${build.dir.tmp.root}/configs/config.ini) for check properties </echo>
 		<xmlproperty file="${build.config.filename.xml}" keepRoot="false" />
-		<exportproperties targetfile="${build.dir.tmp.configs}/config.ini" />		
+		<exportproperties targetfile="${build.dir.tmp.configs}/config.ini" />
 	</target>
 
 	<target name="properties-extends">

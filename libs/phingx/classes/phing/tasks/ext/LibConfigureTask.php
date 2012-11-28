@@ -82,8 +82,8 @@ class LibConfigureTask extends Task
 
 				if ( $lib->configure->depends )
 				{
-					$libConfigFilename = ( string ) $lib->deploy->dst . '/data/config_map.php';
-					$this->_processDepends( $libName, $lib->configure->depends, $libConfigFilename );
+					$libDst = ( string ) $lib->deploy->dst;
+					$this->_processDepends( $libName, $lib->configure->depends, $libDst );
 				}
 			}
 		}
@@ -134,7 +134,7 @@ class LibConfigureTask extends Task
 		}
 	}
 
-	protected function _processDepends( $libName, $depends, $libConfigFilename )
+	protected function _processDepends( $libName, $depends, $libDst )
 	{
 		$projectRootDir = trim( ( string ) $this->_configXml->paths->root );
 		$dataDir = trim( ( string ) $this->_configXml->paths->data );
@@ -145,7 +145,8 @@ class LibConfigureTask extends Task
 		$children = $depends->children();
 		if ( count( $children ) )
 		{
-			$mainConfigFilename = $dataDir . '/config.php';
+			$mainConfigFilename =  $libDst . '/data/config_main.php';
+			$libConfigFilename = $libDst . '/data/config_map.php';
 
 			$data = array();
 			$data[ 'project_root' ] = $projectRootDir;

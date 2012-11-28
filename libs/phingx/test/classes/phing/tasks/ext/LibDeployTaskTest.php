@@ -36,7 +36,6 @@ class LibDeployTest extends BuildFileTest
 	public function tearDown()
 	{
 		Tools::rmdir( $this->_tmpDir );
-
 	}
 
 	/**
@@ -74,6 +73,16 @@ class LibDeployTest extends BuildFileTest
 			array_merge_recursive( self::$_defaultMessages, array(
 				'Deploy by git',
 				'Deploy by git complete' ) ) );
+		$data[] = array(
+				3,
+				array_merge_recursive( self::$_defaultMessages, array(
+						'Deploy by mercurial',
+						'Deploy by mercurial complete' ) ) );
+		$data[] = array(
+				4,
+				array_merge_recursive( self::$_defaultMessages, array(
+						'Deploy by mercurial',
+						'Deploy by mercurial complete', '1.0' ) ) );
 
 		return $data;
 	}
@@ -87,8 +96,7 @@ class LibDeployTest extends BuildFileTest
 	 */
 	public function testDeployError( $num = 1, $messages = array() )
 	{
-		//because we use verbose exec task
-		ob_start();
+		$this->setExpectedException( 'BuildException' );
 		$targetName = 'deploy_error_' . $num;
 		$this->executeTarget( $targetName );
 
@@ -96,7 +104,6 @@ class LibDeployTest extends BuildFileTest
 		{
 			$this->assertInLogs( $m );
 		}
-		ob_end_clean();
 	}
 
 	public function providerTestDeployError()
@@ -107,9 +114,9 @@ class LibDeployTest extends BuildFileTest
 			1,
 			self::$_defaultMessages + array( 'Unknown deploy type' ) );
 
-		$data[] = array(
-			2,
-			self::$_defaultMessages + array( 'doesn\'t exist' ) );
+// 		$data[] = array(
+// 			2,
+// 			self::$_defaultMessages + array( 'doesn\'t exist' ) );
 
 		return $data;
 	}

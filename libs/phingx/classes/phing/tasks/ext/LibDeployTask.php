@@ -3,29 +3,40 @@ require_once 'phing/Task.php';
 require_once 'phing/tasks/system/ExecTask.php';
 
 /**
- * Super installer
+ * Deploy lib by config file
+ *
+ * @example
+ * <code>
+ * <Kin>
+ * 	...
+ * 		<deploy>
+ * 			<type>hg</type>		<!-- Require. Variants: <none|svn|git|hg>. Version Control System type. -->
+ * 			<tag>default</tag>	<!-- Require. Tag name. -->
+ *
+ * 			<src>https://github.com/TheRatG/kin.git</src>	<!-- Require. Source library: url or path.-->
+ * 			<dst>/www/project/libs/kin/default</dst>	<!-- Require. Destination folder.-->
+ *
+ * 			<current>/www/project/libs/kin/current</current> <!-- Optional. Symlink for current library version-->
+ *
+ * 			<username></username> <!-- Optional. VSC username-->
+ * 			<password></password> <!-- Optional. VSC password-->
+ * 			<export></export> <!-- Optional. For svn -->
+ * 		</deploy>
+ * 	...
+ * </Kin>
+ * </code>
  */
 class LibDeployTask extends Task
 {
-
-	protected $failonerror = false;
-
+	const TYPE_SVN = 'svn';
+	const TYPE_GIT = 'git';
+	const TYPE_MERCURIAL = 'hg';
+	const TYPE_NONE = 'none';
 	protected $filesets = array();
-
-	protected $quiet = false;
-
-	protected $isTest = false;
-
-	protected $_execTask;
 
 	public function setFailonerror( $value )
 	{
 		$this->failonerror = $value;
-	}
-
-	public function setIsTest( $isTest )
-	{
-		$this->isTest = $isTest;
 	}
 
 	public function createFileSet()
@@ -36,11 +47,28 @@ class LibDeployTask extends Task
 		return $result;
 	}
 
+	/* internal prop */
+	protected $_execTask;
+	protected $_type;
+	protected $_bin;
+	protected $_username;
+	protected $_password;
+	protected $_tag;
+	protected $_dst;
+	protected $_src;
+	protected $_isExport;
+
+	public function setIsTest( $isTest )
+	{
+		$this->isTest = $isTest;
+	}
+
 	public function init()
 	{
 		$this->_execTask = new ExecTask();
 		$this->_execTask->setPassthru( true );
 		$this->_execTask->setLevel( 'info' );
+		$this->_execTask->setCheckreturn( true );
 		return true;
 	}
 
@@ -54,7 +82,8 @@ class LibDeployTask extends Task
 			try
 			{
 				// получаем массив со списком исходных файлов
-				$files = $fs->getDirectoryScanner( $this->project )->getIncludedFiles();
+				$files = $fs->getDirectoryScanner(
+					$this->project )->getIncludedFiles();
 				$fullPath = realpath( $fs->getDir( $this->project ) );
 
 				foreach ( $files as $file )
@@ -65,20 +94,14 @@ class LibDeployTask extends Task
 
 					$filename = sprintf( '%s/%s', $fullPath, $file );
 					$config = simplexml_load_file( $filename );
+					$this->_initDeployParams( $name, $config );
 					$this->_deployItem( $name, $config );
 				}
 			}
 			catch ( BuildException $be )
 			{
 				// папка не существует или доступ к ней закрыт
-				if ( $this->failonerror )
-				{
-					throw $be;
-				}
-				else
-				{
-					$this->log( $be->getMessage(), $this->quiet ? Project::MSG_VERBOSE : Project::MSG_ERR );
-				}
+				throw $be;
 			}
 		}
 
@@ -86,12 +109,82 @@ class LibDeployTask extends Task
 		$this->log( $msg );
 	}
 
-	protected function _deployItem( $name, $config )
+	protected function _initDeployParams( $name, $config )
 	{
 		$msg = sprintf( "\tRead config %s", $name );
 		$this->log( $msg );
 
 		$type = ( string ) $config->deploy->type;
+		$this->_type = $type;
+
+		$tag = null;
+		if ( $config->deploy->tag )
+		{
+			$tag = ( string ) $config->deploy->tag;
+		}
+		if ( !$tag )
+		{
+			switch ( $this->_type )
+			{
+				case self::TYPE_MERCURIAL:
+					$tag = 'default';
+					break;
+				case self::TYPE_SVN:
+					$tag = 'trunk';
+					break;
+				case self::TYPE_GIT:
+					$tag = 'master';
+					break;
+			}
+		}
+		$this->_tag = $tag;
+
+		$this->_username = ( string ) $config->deploy->username;
+		$this->_password = ( string ) $config->deploy->password;
+		$src = ( string ) $config->deploy->src;
+		$this->_src = trim( $src );
+		$dst = ( string ) $config->deploy->dst;
+		$this->_dst = trim( $dst );
+
+		$this->_isExport = false;
+		if ( $config->deploy->export )
+		{
+			$this->_isExport = ( bool ) $config->deploy->export;
+		}
+
+		$msg = sprintf( "\tType: %s", $this->_type );
+		$this->log( $msg );
+		$msg = sprintf( "\tTag: %s", $this->_tag );
+		$this->log( $msg );
+		$msg = sprintf( "\tUsername: %s", $this->_username );
+		$this->log( $msg );
+		$msg = sprintf( "\tSource url: %s", $this->_src );
+		$this->log( $msg );
+		$msg = sprintf( "\tDestination folder: %s", $this->_dst );
+		$this->log( $msg );
+
+		$error = '';
+		if ( empty( $this->_src ) && $this->_type !== self::TYPE_NONE )
+		{
+			$error = 'Invalid config param "src" is require';
+		}
+		if ( empty( $this->_type ) )
+		{
+			$error = 'Invalid config param "src" is require';
+		}
+		if ( empty( $this->_dst ) )
+		{
+			$error = 'Invalid config param "src" is require';
+		}
+		if ( $error )
+		{
+			throw new BuildException( $error );
+		}
+	}
+
+	protected function _deployItem( $name, $config )
+	{
+		$type = $this->_type;
 		$functionName = '_deploy' . ucfirst( $type );
 
 		if ( !method_exists( $this, $functionName ) )
@@ -101,9 +194,8 @@ class LibDeployTask extends Task
 			throw new BuildException( $msg );
 		}
 
-		call_user_func_array( array( $this, $functionName ), array(
-			$name,
-			$config ) );
+		call_user_func_array( array( $this, $functionName ),
+			array( $name, $config ) );
 	}
 
 	protected function _deployNone()
@@ -120,27 +212,24 @@ class LibDeployTask extends Task
 	{
 		$this->log( "\tDeploy by svn" );
 
-		$username = ( string ) $config->deploy->svn->username;
-		$username = trim( $username );
-		$password = ( string ) $config->deploy->svn->password;
-		$isExport = ( bool ) $config->deploy->export;
+		$username = $this->_username;
+		$password = $this->_password;
+		$isExport = $this->_isExport;
 		$bin = $this->project->getProperty( 'system.bin.svn' );
 		if ( empty( $bin ) )
 		{
 			$bin = 'svn';
 		}
 
-		$repositoryUrl = ( string ) $config->deploy->src;
-		$repositoryUrl = trim( $repositoryUrl );
+		$repositoryUrl = $this->_src;
 
-		$toDir = ( string ) $config->deploy->dst;
-		$toDir = trim( $toDir );
-
+		$toDir = $this->_dst;
 		$toDir = $this->_geFullPath( $toDir );
 
 		$commandAr = array();
 		$isUpdate = false;
-		if ( file_exists( $toDir ) && is_dir( $toDir ) && file_exists( $toDir . '/.svn' ) )
+		if ( file_exists( $toDir ) && is_dir( $toDir ) && file_exists(
+			$toDir . '/.svn' ) )
 		{
 			$commandAr[] = sprintf( '%s update', $bin );
 			$isUpdate = true;
@@ -189,28 +278,23 @@ class LibDeployTask extends Task
 	{
 		$this->log( "\tDeploy by git" );
 
-		$repositoryUrl = ( string ) $config->deploy->src;
-		$repositoryUrl = trim( $repositoryUrl );
+		$repositoryUrl = $this->_src;
 		$bin = $this->project->getProperty( 'system.bin.git' );
 		if ( empty( $bin ) )
 		{
 			$bin = 'git';
 		}
 
-		$branch = '';
-		if ( $config->deploy->tag )
-		{
-			$branch = ( string ) $config->deploy->tag;
-		}
+		$branch = $this->_tag;
 
-		$toDir = ( string ) $config->deploy->dst;
-		$toDir = trim( $toDir );
+		$toDir = $this->_dst;
 		$toDir = $this->_geFullPath( $toDir );
 
 		$returnProp = 'libdeploy.git.return';
 		$outputProp = 'libdeploy.git.output';
 
-		if ( file_exists( $toDir ) && is_dir( $toDir ) && file_exists( $toDir . '/.git' ) )
+		if ( file_exists( $toDir ) && is_dir( $toDir ) && file_exists(
+			$toDir . '/.git' ) )
 		{
 			$command = '';
 			if ( !empty( $branch ) )
@@ -223,7 +307,8 @@ class LibDeployTask extends Task
 		}
 		else
 		{
-			$command = sprintf( '%s clone "%s" "%s"', $bin, $repositoryUrl, $toDir );
+			$command = sprintf( '%s clone "%s" "%s"', $bin, $repositoryUrl,
+				$toDir );
 			if ( !empty( $branch ) )
 			{
 				$command = $command . ' --branch ' . $branch;
@@ -242,13 +327,11 @@ class LibDeployTask extends Task
 	 */
 	protected function _deployHg( $name, $config )
 	{
-		$this->log( "\tDeploy by Mercurial" );
+		$this->log( "\tDeploy by mercurial" );
 
-		$username = ( string ) $config->deploy->hg->username;
-		$username = trim( $username );
-		$password = ( string ) $config->deploy->hg->password;
-		$repositoryUrl = ( string ) $config->deploy->src;
-		$repositoryUrl = trim( $repositoryUrl );
+		$username = $this->_username;
+		$password = $this->_password;
+		$repositoryUrl = $this->_src;
 		$bin = $this->project->getProperty( 'system.bin.hg' );
 		if ( empty( $bin ) )
 		{
@@ -269,13 +352,10 @@ class LibDeployTask extends Task
 			$inner .= '@';
 		}
 		$replace = sprintf( '$1://%s$2', $inner );
-		$repositoryUrlSecure = preg_replace( '/(http|https|ssh|hb|git):\/\/(.*)/i', $replace, $repositoryUrl );
+		$repositoryUrlSecure = preg_replace(
+			'/(http|https|ssh|hb|git):\/\/(.*)/i', $replace, $repositoryUrl );
 
-		$branch = '';
-		if ( $config->deploy->tag )
-		{
-			$branch = ( string ) $config->deploy->tag;
-		}
+		$branch = $this->_tag;
 
 		$toDir = ( string ) $config->deploy->dst;
 		$toDir = trim( $toDir );
@@ -284,23 +364,22 @@ class LibDeployTask extends Task
 		$returnProp = 'libdeploy.git.return';
 		$outputProp = 'libdeploy.git.output';
 
-		if ( file_exists( $toDir ) && is_dir( $toDir ) && file_exists( $toDir . '/.hg' ) )
+		if ( file_exists( $toDir ) && is_dir( $toDir ) && file_exists(
+			$toDir . '/.hg' ) )
 		{
 			$branchSuffix = empty( $branch ) ? '' : sprintf( ' -r %s', $branch );
 			$command = sprintf( '%s pull -u %s', $bin, $branchSuffix );
 
-
-			$this->log( 'Please enter login and password' );
 			$this->_exec( $command, $returnProp, $outputProp, $toDir );
 		}
 		else
 		{
-			$command = sprintf( '%s clone "%s" "%s"', $bin, $repositoryUrlSecure, $toDir );
+			$command = sprintf( '%s clone "%s" "%s"', $bin,
+				$repositoryUrlSecure, $toDir );
 			if ( !empty( $branch ) )
 			{
 				$command = $command . ' -r ' . $branch;
 			}
-			$this->log( 'Please enter login and password' );
 			$this->_exec( $command, $returnProp, $outputProp );
 		}
 

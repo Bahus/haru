@@ -1,9 +1,10 @@
 # HARU
 
+## 2.1 (future)
+ * [11] Update twitter bootstrap
+
 ## 2.0
 In future:
- * [12] Consider revision for hg, git deploy
- * [11] Update twitter bootstrap
  * [10] Change tags for deploy section
  * [7] Fixed generate config.php
 

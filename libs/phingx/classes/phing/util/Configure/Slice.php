@@ -18,11 +18,11 @@ class Configure_Slice
 
 	private $_configDirName = 'data';
 
-	private $_fileXmlBasename = 'config.xml';
-
-	private $_filePhpBasename = 'config.php';
+	private $_fileBasename = 'config';
 
 	private $_xmlObj = null;
+
+	private $_xmlMainConfig;
 
 	public function __construct( $xmlPhpPropertiesFilename )
 	{
@@ -36,23 +36,16 @@ class Configure_Slice
 		}
 
 		$this->_xmlObj = $xml;
+
+		$config = clone $xml;
+		$libDir = ( string ) $config->paths->root;
+		unset( $config->libs );
+		$this->_xmlMainConfig = $config;
 	}
 
 	public function run()
 	{
-		$result1 = $this->_runMain();
-		$result2 = $this->_runLibs();
-		$result = array_merge_recursive( $result1, $result2 );
-		return $result;
-	}
-
-	protected function _runMain()
-	{
-		$xml = $this->_xmlObj;
-		$config = clone $xml;
-		$libDir = ( string ) $config->paths->root;
-		unset( $config->libs );
-		$result[ 'Main' ] = $this->_generateSlice( $libDir . '/data', $config );
+		$result = $this->_runLibs();
 		return $result;
 	}
 
@@ -77,6 +70,7 @@ class Configure_Slice
 				}
 			}
 			$result[ $libName ] = $this->_generateSlice( $libDir . '/data', $config );
+			$result[ $libName . '_main' ] = $this->_generateSlice( $libDir . '/data', $this->_xmlMainConfig, 'config_main' );
 		}
 		return $result;
 	}
@@ -88,10 +82,15 @@ class Configure_Slice
 		$toDom->appendChild( $toDom->ownerDocument->importNode( $fromDom, true ) );
 	}
 
-	protected function _generateSlice( $dstDir, $xml )
+	protected function _generateSlice( $dstDir, $xml, $fileBasename = '' )
 	{
-		$phpFileName = sprintf( '%s/%s', $dstDir, $this->_filePhpBasename );
-		$xmlFileName = sprintf( '%s/%s', $dstDir, $this->_fileXmlBasename );
+		if ( empty( $fileBasename ))
+		{
+			$fileBasename = $this->_fileBasename;
+		}
+
+		$phpFileName = sprintf( '%s/%s.php', $dstDir, $fileBasename );
+		$xmlFileName = sprintf( '%s/%s.xml', $dstDir, $fileBasename );
 
 		if ( !file_exists( $dstDir ) )
 		{

@@ -9,7 +9,6 @@
 				<src>http://github.com/TheRatG/miao.git</src>
 				<dst>${config.paths.libs}/miao/${config.libs.Miao.deploy.tag}</dst>
 				<current>${config.paths.libs}/miao/current</current>
-				<keep_old_versions><![CDATA[2]]></keep_old_versions>
 			</deploy>
 			<configure>
 				<depends>
@@ -36,7 +35,7 @@
 			<link></link>
 			<modules>
 				<Env>
-					<error_level>30711</error_level>
+					<error_level>-1</error_level>
 					<default_timezone>Europe/Moscow</default_timezone>
 					<unregister_globals>1</unregister_globals>
 					<strip_global_slashes>1</strip_global_slashes>

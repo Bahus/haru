@@ -1,11 +1,11 @@
 <Jquery>
 	<deploy>
 		<type>svn</type>
-		<src>http://jquery-ui.googlecode.com/svn/trunk/themes</src>
+		<src>http://jquery-ui.googlecode.com/svn/tags/1.8.24/themes/flick/</src>
 		<dst>./../../../../tmp/libdeploy/jquery</dst>
 		<svn>
 			<username>anonimus</username>
 			<password></password>
 		</svn>
 	</deploy>
-</Jquery> 
+</Jquery>

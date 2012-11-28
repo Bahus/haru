@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PHPUnit>
+	<deploy>
+		<type>git</type>
+		<tag>master</tag>
+		<src>https://vpak@bitbucket.org/vpak/haru_test_git.git</src>
+		<dst>./../../../../tmp/libdeploy/haru_test_git</dst>
+		<username></username>
+		<password></password>
+	</deploy>
+</PHPUnit>

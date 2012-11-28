@@ -2,7 +2,7 @@
 <project name="Lib Deploy Test" default="build">
 	<taskdef name="libdeploy" classname="phing.tasks.ext.LibDeployTask" />
 	<target name="deploy_1">
-		<libdeploy failonerror="true">
+		<libdeploy >
 			<fileset dir="items_1" id="lib.items">
 			  <include name="*.xml" />
 			</fileset>
@@ -12,6 +12,28 @@
 	<target name="deploy_2">
 		<!-- Пробегаем циклом -->
 		<fileset dir="items_2" id="lib.items">
+		  <include name="*.xml" />
+		</fileset>
+		<!-- Выкачиваем нужные либы -->
+		<libdeploy>
+			<fileset refid="lib.items" />
+		</libdeploy>
+	</target>
+	
+	<target name="deploy_3">
+		<!-- Пробегаем циклом -->
+		<fileset dir="items_3" id="lib.items">
+		  <include name="*.xml" />
+		</fileset>
+		<!-- Выкачиваем нужные либы -->
+		<libdeploy>
+			<fileset refid="lib.items" />
+		</libdeploy>
+	</target>
+	
+	<target name="deploy_4">
+		<!-- Пробегаем циклом -->
+		<fileset dir="items_4" id="lib.items">
 		  <include name="*.xml" />
 		</fileset>
 		<!-- Выкачиваем нужные либы -->

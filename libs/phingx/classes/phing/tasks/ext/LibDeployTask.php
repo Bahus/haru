@@ -374,6 +374,14 @@ class LibDeployTask extends Task
 		}
 		else
 		{
+			$parentDir = dirname( $toDir );
+			if ( !file_exists( $parentDir ) )
+			{
+				$this->log( 'Trying to create lib root dir: ' . $parentDir );
+				$rootDirCreateResult = mkdir( $parentDir, 0775, true );
+				$this->log( $rootDirCreateResult ? 'OK' : 'Fail' );
+			}
+
 			$command = sprintf( '%s clone "%s" "%s"', $bin,
 				$repositoryUrlSecure, $toDir );
 			if ( !empty( $branch ) )

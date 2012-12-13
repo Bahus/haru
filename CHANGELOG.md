@@ -1,8 +1,5 @@
 # HARU
 
-## 2.1 (future)
- * [11] Update twitter bootstrap
-
 ## 2.0
 In future:
  * [10] Change tags for deploy section

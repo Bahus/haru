@@ -1,7 +1,7 @@
 # HARU
 
-## 2.1 (future)
- * [11] Update twitter bootstrap
+## 2.1
+ * [13] Depends on network node hostname enhancement
 
 ## 2.0
 In future:

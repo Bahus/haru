@@ -37,6 +37,7 @@
 		<property name="build.tmpldir.root" value="templates/kin" />
 		<property name="build.tmpldir.build" value="${build.tmpldir.root}/build" />
 		<exec command="whoami" outputProperty="build.username" />
+		<exec command="uname -n" outputProperty="build.node.hostname" />
 	</target>
 
 </project>

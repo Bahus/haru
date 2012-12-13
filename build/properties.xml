@@ -1,72 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="properties">
 
-	<target name="properties" depends="properties-check,properties-promt,properties-extends">
+	<target
+		name="properties"
+		depends="properties-check,properties-promt,properties-extends">
 		<echo>Initialize inner property</echo>
 
 		<if>
 			<not>
-				<isset property="build.dir.root"/>
+				<isset property="build.dir.root" />
 			</not>
 			<then>
-				<property name="build.dir.root" value ="${project.basedir}"/>
+				<property
+					name="build.dir.root"
+					value="${project.basedir}" />
 			</then>
 		</if>
 
-		<property name="build.dir.tmp.root" value="${build.dir.root}/tmp" />
+		<property
+			name="build.dir.tmp.root"
+			value="${build.dir.root}/tmp" />
 
-		<property name="build.dir.tmp.libitem" value="${build.dir.tmp.root}/libitem" />
-		<property name="build.dir.tmp.configs" value="${build.dir.tmp.root}/configs" />
+		<property
+			name="build.dir.tmp.libitem"
+			value="${build.dir.tmp.root}/libitem" />
+		<property
+			name="build.dir.tmp.configs"
+			value="${build.dir.tmp.root}/configs" />
 
 		<mkdir dir="${build.dir.tmp.root}" />
 		<mkdir dir="${build.dir.tmp.configs}" />
 		<mkdir dir="${build.dir.tmp.libitem}" />
 
-		<property name="build.config.filename.xml" value="${build.dir.tmp.root}/configs/config.xml" />
-		<property name="build.config.filename.php" value="${build.dir.tmp.root}/configs/config.php" />
+		<property
+			name="build.config.filename.xml"
+			value="${build.dir.tmp.root}/configs/config.xml" />
+		<property
+			name="build.config.filename.php"
+			value="${build.dir.tmp.root}/configs/config.php" />
 
-		<taskdef classname="tasks.ext.XmlMergeTask" name="xmlmerge" />
-		<xmlmerge SrcFileList="${build.dir.properties}/config.xml"
-			dstFile="${build.config.filename.xml}" type="xml">
+		<taskdef
+			classname="tasks.ext.XmlMergeTask"
+			name="xmlmerge" />
+		<xmlmerge
+			SrcFileList="${build.dir.properties}/config.xml"
+			dstFile="${build.config.filename.xml}"
+			type="xml">
 			<fileset dir="${build.dir.properties}">
 				<include name="parts/*.xml" />
 			</fileset>
-			<filelist dir="${build.dir.properties}" files="${build.properties.extends}" />
+			<filelist
+				dir="${build.dir.properties}"
+				files="${build.properties.extends}" />
 		</xmlmerge>
-		 
-		<taskdef name="xmlpropertyresolve" classname="phing.tasks.ext.XmlPropertyResolveTask" />
-		<xmlpropertyresolve file="${build.config.filename.xml}" dstFile="${build.config.filename.xml}" type="xml" />
-		<xmlpropertyresolve file="${build.config.filename.xml}" dstFile="${build.config.filename.php}" type="php" />
-		 		
+
+		<taskdef
+			name="xmlpropertyresolve"
+			classname="phing.tasks.ext.XmlPropertyResolveTask" />
+		<xmlpropertyresolve
+			file="${build.config.filename.xml}"
+			dstFile="${build.config.filename.xml}"
+			type="xml" />
+		<xmlpropertyresolve
+			file="${build.config.filename.xml}"
+			dstFile="${build.config.filename.php}"
+			type="php" />
+
 		<echo>Load all properties and create file (${build.dir.tmp.root}/configs/config.ini) for check properties </echo>
-		<xmlproperty file="${build.config.filename.xml}" keepRoot="false" />
+		<xmlproperty
+			file="${build.config.filename.xml}"
+			keepRoot="false" />
 		<exportproperties targetfile="${build.dir.tmp.configs}/config.ini" />
 	</target>
 
 	<target name="properties-extends">
-		<property name="build.dir.properties" value="${build.dir.root}/properties" />
-		<property name="build.properties.extends" value="" override="true"/>
+		<property
+			name="build.dir.properties"
+			value="${build.dir.root}/properties" />
+		<property
+			name="build.properties.extends"
+			value=""
+			override="true" />
 
 		<if>
 			<and>
-				<isset property="build.user"/>
+				<isset property="build.user" />
 				<not>
-					<available
-						file="${build.dir.properties}/extends/users/${build.user}.xml" />
+					<available file="${build.dir.properties}/extends/users/${build.user}.xml" />
 				</not>
 			</and>
 			<then>
-				<fail
-					message="File not found: ${build.dir.properties}/extends/users/${build.user}.xml" />
+				<fail message="File not found: ${build.dir.properties}/extends/users/${build.user}.xml" />
 			</then>
 			<elseif>
 				<and>
-					<isset property="build.user"/>
-					<available
-						file="${build.dir.properties}/extends/users/${build.user}.xml" />
+					<isset property="build.user" />
+					<available file="${build.dir.properties}/extends/users/${build.user}.xml" />
 				</and>
 				<then>
-					<property name="build.properties.extends" value="extends/users/${build.user}.xml"
+					<property
+						name="build.properties.extends"
+						value="extends/users/${build.user}.xml"
+						override="true" />
+				</then>
+			</elseif>
+			<elseif>
+				<available file="${build.dir.properties}/extends/users/${build.node.hostname}.xml" />
+				<then>
+					<property
+						name="build.properties.extends"
+						value="extends/users/${build.node.hostname}.xml"
 						override="true" />
 				</then>
 			</elseif>
@@ -75,26 +118,32 @@
 		<if>
 			<available file="${build.dir.properties}/extends/${build.type}.xml" />
 			<then>
-				<property name="build.properties.extends"
+				<property
+					name="build.properties.extends"
 					value="extends/${build.type}.xml,${build.properties.extends}"
 					override="true" />
 			</then>
 			<else>
-				<fail
-					message="File not found: ${build.dir.properties}/extends/${build.type}.xml"/>
+				<fail message="File not found: ${build.dir.properties}/extends/${build.type}.xml" />
 			</else>
 		</if>
 	</target>
 
 	<target name="properties-check">
-        <property name="build.prompt" value="false" />
-        <php expression="false !== stripos( '${build.username}', 'mnt' )" returnProperty="build.prompt" />
-    </target>
+		<property
+			name="build.prompt"
+			value="false" />
+		<php
+			expression="false !== stripos( '${build.username}', 'mnt' )"
+			returnProperty="build.prompt" />
+	</target>
 
-	<target name="properties-promt" depends="properties-build-type,properties-build-user">
+	<target
+		name="properties-promt"
+		depends="properties-build-type,properties-build-user">
 		<echo>Build type is "${build.type}"</echo>
 		<if>
-			<isset property="build.user"/>
+			<isset property="build.user" />
 			<then>
 				<echo>Build user is "${build.user}"</echo>
 			</then>
@@ -106,96 +155,159 @@
 
 	<target name="properties-build-type">
 		<echo>Initialization property build.type</echo>
-		        <if>
-            <isfalse value="${build.prompt}"/>
-            <then>
-                <property name="bt" value="D" />
-            </then>
-        </if>
+		<if>
+			<isfalse value="${build.prompt}" />
+			<then>
+				<property
+					name="bt"
+					value="D" />
+			</then>
+		</if>
 
 		<if>
-			<isset property="bt"/>
+			<isset property="bt" />
 			<then>
 			</then>
 			<else>
-				<propertyprompt propertyName="bt" defaultValue="develop"
-					promptText="Enter build type" promptCharacter="enter - Develop(D) | Test(T) | Production(P):" />
+				<propertyprompt
+					propertyName="bt"
+					defaultValue="develop"
+					promptText="Enter build type"
+					promptCharacter="enter - Develop(D) | Test(T) | Production(P):" />
 			</else>
 		</if>
 
-		<condition property="build.type" value="develop">
+		<condition
+			property="build.type"
+			value="develop">
 			<or>
-				<equals arg1="d" arg2="${bt}" casesensitive="false" trim="true" />
-				<equals arg1="dev" arg2="${bt}" casesensitive="false" trim="true" />
-				<equals arg1="develop" arg2="${bt}" casesensitive="false"
+				<equals
+					arg1="d"
+					arg2="${bt}"
+					casesensitive="false"
+					trim="true" />
+				<equals
+					arg1="dev"
+					arg2="${bt}"
+					casesensitive="false"
+					trim="true" />
+				<equals
+					arg1="develop"
+					arg2="${bt}"
+					casesensitive="false"
 					trim="true" />
 			</or>
 		</condition>
-		<condition property="build.type" value="test">
+		<condition
+			property="build.type"
+			value="test">
 			<or>
-				<equals arg1="t" arg2="${bt}" casesensitive="false" trim="true" />
-				<equals arg1="test" arg2="${bt}" casesensitive="false" trim="true" />
+				<equals
+					arg1="t"
+					arg2="${bt}"
+					casesensitive="false"
+					trim="true" />
+				<equals
+					arg1="test"
+					arg2="${bt}"
+					casesensitive="false"
+					trim="true" />
 			</or>
 		</condition>
-		<condition property="build.type" value="production">
+		<condition
+			property="build.type"
+			value="production">
 			<or>
-				<equals arg1="p" arg2="${bt}" casesensitive="false" trim="true" />
-				<equals arg1="prod" arg2="${bt}" casesensitive="false" trim="true" />
-				<equals arg1="production" arg2="${bt}" casesensitive="false"
+				<equals
+					arg1="p"
+					arg2="${bt}"
+					casesensitive="false"
+					trim="true" />
+				<equals
+					arg1="prod"
+					arg2="${bt}"
+					casesensitive="false"
+					trim="true" />
+				<equals
+					arg1="production"
+					arg2="${bt}"
+					casesensitive="false"
 					trim="true" />
 			</or>
 		</condition>
 
-		<condition property="isDefineBuildType" value="true">
+		<condition
+			property="isDefineBuildType"
+			value="true">
 			<not>
 				<or>
-					<equals arg1="develop" arg2="${build.type}" />
-					<equals arg1="test" arg2="${build.type}" />
-					<equals arg1="production" arg2="${build.type}" />
+					<equals
+						arg1="develop"
+						arg2="${build.type}" />
+					<equals
+						arg1="test"
+						arg2="${build.type}" />
+					<equals
+						arg1="production"
+						arg2="${build.type}" />
 				</or>
 			</not>
 		</condition>
 
-		<fail if="isDefineBuildType" message="Invalid build type: must be Develop|Test|Product" />
+		<fail
+			if="isDefineBuildType"
+			message="Invalid build type: must be Develop|Test|Product" />
 
 		<if>
-			<equals arg1="${build.type}" arg2="develop" />
+			<equals
+				arg1="${build.type}"
+				arg2="develop" />
 			<then>
-				<property name="build.isDevelop" value="1"/>
+				<property
+					name="build.isDevelop"
+					value="1" />
 			</then>
 			<else>
-				<property name="build.isDevelop" value="0"/>
+				<property
+					name="build.isDevelop"
+					value="0" />
 			</else>
 		</if>
 	</target>
 
 	<target name="properties-build-user">
 		<echo>Initialization property build.user</echo>
-		        <if>
-            <isfalse value="${build.prompt}"/>
-            <then>
-                <property name="bu" value="${build.username}" />
-            </then>
-        </if>
-
-        <if>
-			<isset property="bu"/>
+		<if>
+			<isfalse value="${build.prompt}" />
 			<then>
-				<property name="build.user" value="${bu}"/>
+				<property
+					name="bu"
+					value="${build.username}" />
+			</then>
+		</if>
+
+		<if>
+			<isset property="bu" />
+			<then>
+				<property
+					name="build.user"
+					value="${bu}" />
 			</then>
 		</if>
 		<if>
 			<and>
-				<istrue value="${build.isDevelop}"/>
+				<istrue value="${build.isDevelop}" />
 				<not>
-					<isset property="build.user"/>
+					<isset property="build.user" />
 				</not>
 			</and>
 			<then>
-				<propertyprompt propertyName="build.user"
-					defaultValue="${build.username}" promptText="Enter build user"
+				<propertyprompt
+					propertyName="build.user"
+					defaultValue="${build.username}"
+					promptText="Enter build user"
 					promptCharacter="" />
 			</then>
-		</if>
+		</if>		
 	</target>
 </project>

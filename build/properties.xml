@@ -109,7 +109,7 @@
 				<then>
 					<property
 						name="build.properties.extends"
-						value="extends/users/${build.node.hostname}.xml"
+						value="extends/servers/${build.node.hostname}.xml"
 						override="true" />
 				</then>
 			</elseif>

@@ -133,9 +133,17 @@ class XmlMergeTask extends Task
 			}
 			$srcFile = $this->_geFullPath( $srcFileList[ $i ] );
 			$contents = file_get_contents( $srcFile );
-			$data = Converter::xml2array( $contents );
 
-			$mergeData = Tools::arrayMergeRecursive(  $mergeData, $data );
+			try
+			{
+				$data = Converter::xml2array( $contents );
+				$mergeData = Tools::arrayMergeRecursive(  $mergeData, $data );
+			}
+			catch ( BuildException $e )
+			{
+				$message = $e->getMessage() . ' File: ' . $srcFile;
+				throw new BuildException( $message );
+			}
 		}
 
 		$dstFile = $this->_geFullPath( $this->_dstFile );

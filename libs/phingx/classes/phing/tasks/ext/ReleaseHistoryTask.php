@@ -41,7 +41,7 @@ class ReleaseHistoryTask extends Task
 			}
 
 			$this->log( 'Delete old items...' );
-			$h = new ReleaseHistory( $this->_config );
+			$h = new ReleaseHistory( $this->_config, $this->getProject() );
 			$h->deleteOldItems();
 			$this->log( 'Done.' );
 		}
@@ -129,7 +129,7 @@ class ReleaseHistoryTask extends Task
 	{
 		$this->log( 'Save history in ' . strval( $el->file ) );
 
-		$h = new ReleaseHistory( $this->_config );
+		$h = new ReleaseHistory( $this->_config, $this->getProject() );
 		$res = $h->save();
 
 		return $res;

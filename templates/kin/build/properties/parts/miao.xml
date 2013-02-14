@@ -41,6 +41,7 @@
 					<strip_global_slashes>1</strip_global_slashes>
 					<umask>0</umask>
 					<upload_tmp_dir>/tmp</upload_tmp_dir>
+					<error_log>${config.paths.logs}/php-error_log</error_log>
 				</Env>
 				<Session>
 					<Handler>

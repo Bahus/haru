@@ -46,7 +46,6 @@ class ReleaseHistory
 						'tag' => $tag,
 						'dst' => $dst );
 					// ,'linked' => true
-
 				}
 
 				$data[ $libName ][ $tag ][ 'last' ] = strval( time() );
@@ -81,7 +80,9 @@ class ReleaseHistory
 		{
 			foreach ( $data as $libname => &$items )
 			{
-				uasort( $items, array( $this, '_cmp' ) );
+				uasort( $items, array(
+					$this,
+					'_cmp' ) );
 			}
 		}
 
@@ -117,10 +118,10 @@ class ReleaseHistory
 		$tmp = is_array( $items[ $libName ] ) ? $items[ $libName ] : array();
 		$tmp = array_slice( $tmp, $keepOldVersions );
 
-		$deleteHelper = new DeleteTask();
-		$deleteHelper->setIncludeemptydirs = true;
-		$deleteHelper->setVerbose = true;
-		$deleteHelper->setFailonerror = false;
+		$deleteHelper = new ExecTask();
+		$deleteHelper->setProject( $this->_project );
+		$deleteHelper->setLogoutput = true;
+		$deleteHelper->setCheckreturn = true;
 
 		foreach ( $tmp as $deletedItem )
 		{
@@ -129,7 +130,14 @@ class ReleaseHistory
 
 			if ( $dst != $lib->deploy->dst )
 			{
-				$deleteHelper->setDir = $dst;
+				if ( strpos( Phing::getProperty( 'host.fstype' ), 'WIN' ) === 0 )
+				{
+					$deleteHelper->setCommand( 'rmdir /S /Q ' . escapeshellarg( $dst ) );
+				}
+				else
+				{
+					$deleteHelper->setCommand( 'rm -r ' . escapeshellarg( $dst ) );
+				}
 				$deleteHelper->main();
 				unset( $items[ $libName ][ $tag ] );
 			}

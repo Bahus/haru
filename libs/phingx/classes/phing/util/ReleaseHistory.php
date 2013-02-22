@@ -7,15 +7,17 @@
  * @author gfilippov@rbc.ru
  *
  */
-class ReleaseHistory
+class ReleaseHistoryTask extends Task
 {
 	protected $_filename = '';
 	protected $_config;
+	protected $_project;
 
-	public function __construct( SimpleXMLElement $config )
+	public function __construct( SimpleXMLElement $config, $project )
 	{
 		$this->_config = $config;
 		$this->_filename = $config->release_history->local->file;
+		$this->_project = $project;
 	}
 
 	public function getFileName()

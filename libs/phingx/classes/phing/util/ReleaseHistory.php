@@ -7,7 +7,7 @@
  * @author gfilippov@rbc.ru
  *
  */
-class ReleaseHistoryTask extends Task
+class ReleaseHistory
 {
 	protected $_filename = '';
 	protected $_config;

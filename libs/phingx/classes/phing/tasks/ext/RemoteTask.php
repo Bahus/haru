@@ -1,159 +1,118 @@
 <?php
+require_once 'phing/Task.php';
+require_once 'phing/BuildException.php';
+
 /**
- *
- * Работа с локальным статусом развернутых версий
- * <li>Хранение текщих выкаченных версий
- * <li>Удаление старых версий
- * @author gfilippov@rbc.ru
- *
+ * Execute remote operations
  */
-class ReleaseHistory
+class RemoteTask extends Task
 {
-	protected $_filename = '';
-	protected $_config;
-	protected $_project;
+	private $_host;
+	private $_target;
+	private $_ips = array();
 
-	public function __construct( SimpleXMLElement $config, $project )
+	/**
+	 * Whether to check the return code.
+	 * @var boolean
+	 */
+	protected $_checkreturn = true;
+
+	/**
+	 *
+	 * @param field_type $host
+	 */
+	public function setHost( $host )
 	{
-		$this->_config = $config;
-		$this->_filename = $config->release_history->local->file;
-		$this->_project = $project;
+		$this->_host = $host;
 	}
 
-	public function getFileName()
+	/**
+	 *
+	 * @param field_type $_target
+	 */
+	public function setTarget( $target )
 	{
-		return $this->_filename;
+		$this->_target = $target;
 	}
 
-	public function save()
+	/**
+	 * Whether to check the return code.
+	 *
+	 * @param boolean $checkreturn If the return code shall be checked
+	 *
+	 * @return void
+	 */
+	public function setCheckreturn($checkreturn)
 	{
-		$data = $this->load();
-		foreach ( $this->_config->libs->children() as $lib )
+		$this->_checkreturn = (bool) $checkreturn;
+	}
+
+	public function init()
+	{
+
+	}
+
+	public function main()
+	{
+		if ( empty( $this->_target ) )
 		{
-			if ( $lib->deploy->tag && $lib->deploy->type != 'none' )
-			{
-				$libName = strval( $lib->getName() );
-				$tag = strval( $lib->deploy->tag );
-				$dst = strval( $lib->deploy->dst );
+			$message = 'Param "target" not found.';
+			throw new BuildException( $message );
+		}
+		$this->_checkHost( $this->_host );
 
-				if ( !isset( $data[ $libName ] ) )
-				{
-					$data[ $libName ] = array();
-				}
+		$msg = sprintf( "Host: %s, IPs found: %s", $host, implode( ' ', $this->_ips ) );
+		$this->log( $msg );
+		$msg = sprintf( 'Target: %s', $this->_target );
+		$this->log( $msg );
 
-				if ( !isset( $data[ $libName ][ $tag ] ) )
-				{
-					$data[ $libName ][ $tag ] = array(
-						'first' => strval( time() ),
-						'tag' => $tag,
-						'dst' => $dst );
-					// ,'linked' => true
-				}
-
-				$data[ $libName ][ $tag ][ 'last' ] = strval( time() );
-			}
+		$commandAr = array();
+		$buildDirRoot = $this->getProject()->getProperty( 'build.dir.root' );
+		$commandAr[] = $buildDirRoot . '/bin/phing';
+		$projectBasedir = $this->getProject()->getProperty( 'project.basedir' );
+		$commandAr[] = sprintf( '-f %s/build.xml', $projectBasedir );
+		$commandAr[] = $this->_target;
+		$buildType = $this->getProject()->getProperty( 'build.type' );
+		$commandAr[] = sprintf( '-Dbt=%s', $buildType );
+		$buildUser = $this->getProject()->getProperty( 'build.user' );
+		if ( $buildUser )
+		{
+			$commandAr[] = sprintf( '-Dbu=%s', $buildUser );
 		}
 
-		$res = $this->_save( $data );
-
-		return $res;
-	}
-
-	protected function _save( $data )
-	{
-		$fileName = $this->getFileName();
-		$res = file_put_contents( $fileName, json_encode( $data ) );
-		chmod( $fileName, 0644 );
-		return $res;
-	}
-
-	public function load()
-	{
-		$filename = $this->getFileName();
-		$data = file_exists( $filename ) ? file_get_contents( $filename ) : '';
-
-		$data = json_decode( $data, true );
-
-		if ( is_null( $data ) )
+		foreach ( $this->_ips as $ip )
 		{
-			$data = array();
-		}
-		else
-		{
-			foreach ( $data as $libname => &$items )
-			{
-				uasort( $items, array(
-					$this,
-					'_cmp' ) );
-			}
-		}
+			$command = sprintf( 'ssh %s %s', $ip, implode( ' ', $commandAr ) );
 
-		return $data;
+			$msg = 'Run command ' . $command;
+			$this->log( $msg );
+
+			$returnProp = 'remote.return';
+			$outputProp = 'remote.output';
+			$obj = new ExecTask();
+			$obj->setProject( $this->project );
+			$obj->setCommand( $command );
+			$obj->setLogoutput( true );
+			$obj->setReturnProperty( $returnProp );
+			$obj->setOutputProperty( $outputProp );
+			$obj->setCheckreturn( $this->_checkreturn );
+			$obj->setPassthru( true );
+			$obj->setLevel( 'info' );
+			$obj->main();
+		}
 	}
 
-	public function deleteOldItems()
+	protected function _checkHost( $host )
 	{
-		$items = $this->load();
-		$itemsForDelete = array();
-
-		foreach ( $this->_config->libs->children() as $lib )
+		if ( is_null( $host ) )
 		{
-			$deployType = empty( $lib->deploy->type ) ? 'none' : strval( $lib->deploy->type );
-			$keepOldVersions = empty( $lib->deploy->keep_old_versions ) ? 0 : intval( $lib->deploy->keep_old_versions );
-
-			if ( $deployType == 'none' || $keepOldVersions < 2 )
-			{
-				continue;
-			}
-
-			$this->_delete( $lib, $items, $keepOldVersions );
+			$message = 'Param "host" not found.';
+			throw new BuildException( $message );
 		}
-
-		$this->_save( $items );
-	}
-
-	private function _delete( SimpleXMLElement $lib, &$items, $keepOldVersions )
-	{
-		$res = array();
-
-		$libName = strval( $lib->getName() );
-		$tmp = is_array( $items[ $libName ] ) ? $items[ $libName ] : array();
-		$tmp = array_slice( $tmp, $keepOldVersions );
-
-		$deleteHelper = new ExecTask();
-		$deleteHelper->setProject( $this->_project );
-		$deleteHelper->setLogoutput = true;
-		$deleteHelper->setCheckreturn = true;
-
-		foreach ( $tmp as $deletedItem )
+		$this->_ips = gethostbynamel( $host );
+		if ( !is_array( $this->_ips ) )
 		{
-			$dst = $deletedItem[ 'dst' ];
-			$tag = $deletedItem[ 'tag' ];
-
-			if ( $dst != $lib->deploy->dst )
-			{
-				if ( strpos( Phing::getProperty( 'host.fstype' ), 'WIN' ) === 0 )
-				{
-					$deleteHelper->setCommand( 'rmdir /S /Q ' . escapeshellarg( $dst ) );
-				}
-				else
-				{
-					$deleteHelper->setCommand( 'rm -r ' . escapeshellarg( $dst ) );
-				}
-				$deleteHelper->main();
-				unset( $items[ $libName ][ $tag ] );
-			}
+			throw new BuildException( 'Bad param: host:' . $host );
 		}
-
-		unset( $deleteHelper );
-		return $res;
-	}
-
-	protected function _cmp( $b, $a )
-	{
-		$al = $a[ 'last' ];
-		$bl = $b[ 'last' ];
-		$res = $al > $bl ? 1 : ( $al == $bl ? 0 : -1 );
-		return $res;
 	}
 }

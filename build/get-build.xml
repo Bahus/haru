@@ -76,7 +76,7 @@
             </then>
             <else>
                 <propertyprompt propertyName="get-build.deploy.vcs.src"
-                    promptText="Enter, please, SVN|GIT url, where I could find build files" />
+                    promptText="Enter, please, svn|git|hg URL, where I could find build files" />
             </else>
         </if>
 

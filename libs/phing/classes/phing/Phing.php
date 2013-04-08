@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id: 1ad418f51ac07c9afaadf1c1f4befd5535f5b390 $
+ * $Id: 1c51e37f5b2590517dd6d60a805ab2d0cda7cf6b $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -58,7 +58,7 @@ include_once 'phing/system/util/Register.php';
  *
  * @author    Andreas Aderhold <andi@binarycloud.com>
  * @author    Hans Lellelid <hans@xmpl.org>
- * @version   $Id: 1ad418f51ac07c9afaadf1c1f4befd5535f5b390 $
+ * @version   $Id: 1c51e37f5b2590517dd6d60a805ab2d0cda7cf6b $
  * @package   phing
  */
 class Phing {
@@ -197,10 +197,10 @@ class Phing {
      */
     private static function initializeOutputStreams() {
         if (self::$out === null) {
-            self::$out = new OutputStream(fopen("php://stdout", "w"));
+            self::$out = new OutputStream(STDOUT);
         }
         if (self::$err === null) {
-            self::$err = new OutputStream(fopen("php://stderr", "w"));
+            self::$err = new OutputStream(STDERR);
         }
     }
 
@@ -356,7 +356,14 @@ class Phing {
                     $this->listeners[] = $args[++$i];
                 }
             } elseif (StringHelper::startsWith("-D", $arg)) {
-                $name = substr($arg, 2);
+                // Evaluating the property information //
+                // Checking whether arg. is not just a switch, and next arg. does not starts with switch identifier
+                if ( ('-D' == $arg) && (! StringHelper::startsWith('-', $args[$i+1])) ) {
+                  $name = $args[++$i];
+                } else {
+                  $name = substr($arg, 2);
+                }
+                
                 $value = null;
                 $posEq = strpos($name, "=");
                 if ($posEq !== false) {
@@ -509,6 +516,7 @@ class Phing {
 
         // set this right away, so that it can be used in logging.
         $project->setUserProperty("phing.file", $this->buildFile->getAbsolutePath());
+        $project->setUserProperty("phing.dir", dirname($this->buildFile->getAbsolutePath()));
 
         try {
             $project->fireBuildStarted();
@@ -1074,7 +1082,7 @@ class Phing {
 
         if (self::$importPaths === null) {
             $paths = get_include_path();
-            self::$importPaths = explode(PATH_SEPARATOR, ini_get("include_path"));
+            self::$importPaths = explode(PATH_SEPARATOR, $paths);
         }
 
         $path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
@@ -1091,6 +1099,14 @@ class Phing {
         $homeDir = self::getProperty('phing.home');
         if ($homeDir) {
             $testPath = $homeDir . DIRECTORY_SEPARATOR . $path;
+            if (file_exists($testPath)) {
+                return $testPath;
+            }
+        }
+
+        // Check for the phing home of phar archive
+        if (strpos(self::$importPaths[0], 'phar://') === 0) {
+            $testPath = self::$importPaths[0] . '/../' . $path;
             if (file_exists($testPath)) {
                 return $testPath;
             }

@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: f25fc4c605ead65db9235c9fe328b2d47b7c8299 $
+ *  $Id: c8a27d142a32a51a6cba57b752ad7d36bd4c8a0c $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,7 +24,7 @@ require_once 'phing/Task.php';
 /**
  * Deletes a file or directory, or set of files defined by a fileset.
  * 
- * @version   $Id: f25fc4c605ead65db9235c9fe328b2d47b7c8299 $
+ * @version   $Id: c8a27d142a32a51a6cba57b752ad7d36bd4c8a0c $
  * @package   phing.tasks.system
  */
 class DeleteTask extends Task {
@@ -35,7 +35,7 @@ class DeleteTask extends Task {
     protected $includeEmpty = false;
 
     protected $quiet = false;
-    protected $failonerror = true;
+    protected $failonerror = false;
     protected $verbosity = Project::MSG_VERBOSE;
     
     /** Any filelists of files that should be deleted. */
@@ -111,7 +111,7 @@ class DeleteTask extends Task {
         if ($this->file === null && $this->dir === null && count($this->filesets) === 0 && count($this->filelists) === 0) {
             throw new BuildException("At least one of the file or dir attributes, or a fileset element, or a filelist element must be set.");
         }
-
+        
         if ($this->quiet && $this->failonerror) {
             throw new BuildException("quiet and failonerror cannot both be set to true", $this->location);
         }
@@ -135,16 +135,32 @@ class DeleteTask extends Task {
                     }
                 }
             } else {
-                $this->log("Could not find file " . $this->file->getAbsolutePath() . " to delete.",Project::MSG_VERBOSE);
+                $message = "Could not find file " . $this->file->getAbsolutePath() . " to delete.";
+                
+                if ($this->failonerror) {
+                    throw new BuildException($message);
+                } else {
+                    $this->log($message, ($this->quiet ? Project::MSG_VERBOSE : Project::MSG_WARN));
+                }
             }
         }
 
         // delete the directory
-        if ($this->dir !== null && $this->dir->exists() && $this->dir->isDirectory()) {
-            if ($this->verbosity === Project::MSG_VERBOSE) {
-                $this->log("Deleting directory " . $this->dir->__toString());
+        if ($this->dir !== null) {
+            if ($this->dir->exists() && $this->dir->isDirectory()) {
+                if ($this->verbosity === Project::MSG_VERBOSE) {
+                    $this->log("Deleting directory " . $this->dir->__toString());
+                }
+                $this->removeDir($this->dir);
+            } else {
+                $message = "Directory " . $this->dir->getAbsolutePath() . " does not exist or is not a directory.";
+                
+                if ($this->failonerror) {
+                    throw new BuildException($message);
+                } else {
+                    $this->log($message, ($this->quiet ? Project::MSG_VERBOSE : Project::MSG_WARN));
+                }
             }
-            $this->removeDir($this->dir);
         }
         
         // delete the files in the filelists

@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: e62ed1e00cc6ed859746760c89bc0f873db4620a $
+ *  $Id: f31862c8257dfbeab17eb661d585bb9485ea14b7 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,8 +25,9 @@ require_once 'phing/ProjectComponent.php'; require_once 'phing/tasks/system/cond
  * Condition that tests whether a given reference exists.
  *
  * @author Matthias Pigulla <mp@webfactory.de> (Phing)
- * @version $Id$
- * @package phing.tasks.system.condition  */
+ * @version $Id: f31862c8257dfbeab17eb661d585bb9485ea14b7 $
+ * @package phing.tasks.system.condition
+ */
 class ReferenceExistsCondition extends ProjectComponent implements Condition {
     
     private $refid;

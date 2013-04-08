@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 035d43c0c50ca9567e9c8a016fef6a3053164acb $
+ *  $Id: c5a3ef3c4fbb1896df2b223194a8e372a8b5649c $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,7 +31,7 @@ require_once 'phing/tasks/ext/dbdeploy/DbmsSyntaxFactory.php';
  *     userid="dbdeploy" password="dbdeploy" dir="db" outputfile="">
  *
  * @author   Luke Crouch at SourceForge (http://sourceforge.net)
- * @version  $Id$
+ * @version  $Id: c5a3ef3c4fbb1896df2b223194a8e372a8b5649c $
  * @package  phing.tasks.ext.dbdeploy
  */
 class DbDeployTask extends Task
@@ -126,6 +126,14 @@ class DbDeployTask extends Task
      * @var int
      */
     protected $checkall = false;
+    
+    /**
+     * The value of the 'applied_by' column for
+     * each changelog entry
+     *
+     * @var string
+     */
+    protected $appliedBy = 'dbdeploy';
 
     /**
      * The main function for the task
@@ -144,7 +152,7 @@ class DbDeployTask extends Task
             // figure out which revisions are in the db already
             $this->appliedChangeNumbers = $this->getAppliedChangeNumbers();
             $this->log('Current db revision: '.$this->getLastChangeAppliedInDb());
-            $this->log('Checkall: ' . $this->checkall);
+            $this->log('Checkall: ' . ($this->checkall ? 'On' : 'Off'));
 
             $this->deploy();
 
@@ -166,6 +174,7 @@ class DbDeployTask extends Task
             $appliedChangeNumbers = array();
             $dbh = new PDO($this->url, $this->userid, $this->password);
             $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->dbmsSyntax->applyAttributes($dbh);
             $sql = "SELECT *
                     FROM " . DbDeployTask::$TABLE_NAME . "
                     WHERE delta_set = '$this->deltaSet'
@@ -239,7 +248,7 @@ class DbDeployTask extends Task
                                 (change_number, delta_set, start_dt, applied_by, description)' .
                             ' VALUES (' . $fileChangeNumber . ', \'' . $this->deltaSet . '\', ' .
                                 $this->dbmsSyntax->generateTimestamp() .
-                                ', \'dbdeploy\', \'' . $fileName . '\');' . "\n";
+                                ', \'' . $this->appliedBy . '\', \'' . $fileName . '\');' . "\n";
                 }
 
                 // read the file
@@ -250,6 +259,8 @@ class DbDeployTask extends Task
                 $split = strpos($contents, '-- //@UNDO');
                 if ($split === false)
                     $split = strpos($contents, '--//@UNDO');
+                if ($split === false)
+                    $split = strlen($contents);
 
                 if ($undo) {
                     $sql .= substr($contents, $split + 10) . "\n";
@@ -279,8 +290,14 @@ class DbDeployTask extends Task
     protected function getDeltasFilesArray()
     {
         $files = array();
+        
         $baseDir = realpath($this->dir);
         $dh = opendir($baseDir);
+        
+        if ($dh === false) {
+            return $files;
+        }
+        
         $fileChangeNumberPrefix = '';
         while (($file = readdir($dh)) !== false) {
             if (preg_match('[\d+]', $file, $fileChangeNumberPrefix)) {
@@ -420,6 +437,17 @@ class DbDeployTask extends Task
     public function setCheckAll($checkall)
     {
         $this->checkall = (int)$checkall;
+    }
+    
+    /**
+     * Set the appliedBy property
+     *
+     * @param string $appliedBy
+     * @return void
+     */
+    public function setAppliedBy($appliedBy)
+    {
+        $this->appliedBy = $appliedBy;
     }
 
     /**

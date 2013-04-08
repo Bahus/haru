@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 3a8bab5e99f20e29f5c7dfe7d02f7a91fb8ccecd $
+ *  $Id: 778617c87e741e45a7ee2df25927a22b982a2c46 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,13 +20,12 @@
  */
  
 /**
- *  Utility class for generating necessary server-specific SQL commands
+ * Utility class for generating necessary server-specific SQL commands
  *
- *  @author   Luke Crouch at SourceForge (http://sourceforge.net)
- *  @version  $Id$
- *  @package  phing.tasks.ext.dbdeploy
+ * @author   Luke Crouch at SourceForge (http://sourceforge.net)
+ * @version  $Id: 778617c87e741e45a7ee2df25927a22b982a2c46 $
+ * @package  phing.tasks.ext.dbdeploy
  */
-
 class DbmsSyntaxMysql extends DbmsSyntax 
 {
     public function generateTimestamp()

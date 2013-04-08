@@ -1,11 +1,34 @@
 <?php
+
+/*
+ *  $Id: 8c248a504d318df4ca1af576699f8c39b3bc261e $
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the LGPL. For more information please see
+ * <http://phing.info>.
+ */
+
 require_once "phing/Task.php";
 require_once dirname(__FILE__) . "/Arg.php";
+
 /**
  * Symfony Console Task
  * @author nuno costa <nuno@francodacosta.com>
  * @license GPL
- *
+ * @version $Id: 8c248a504d318df4ca1af576699f8c39b3bc261e $
+ * @package phing.tasks.ext.symfony
  */
 class SymfonyConsoleTask extends Task
 {
@@ -26,8 +49,19 @@ class SymfonyConsoleTask extends Task
      *
      * @var string path to symfony console application
      */
-    private $console = 'app/console';
+    private $console = 'php app/console';
 
+    /**
+     *
+     * @var string property to be set
+     */
+    private $propertyName = null;
+
+    /**
+     * Whether to check the return code.
+     * @var boolean
+     */
+    private $checkreturn = false;
 
     /**
      * sets the symfony console command to execute
@@ -63,6 +97,28 @@ class SymfonyConsoleTask extends Task
     public function getConsole()
     {
         return $this->console;
+    }
+
+    /**
+     * Set the name of the property to store the hash value in
+     * @param $property
+     * @return void
+     */
+    public function setPropertyName($property)
+    {
+        $this->propertyName = $property;
+    }
+
+    /**
+     * Whether to check the return code.
+     *
+     * @param boolean $checkreturn If the return code shall be checked
+     *
+     * @return void
+     */
+    public function setCheckreturn($checkreturn)
+    {
+        $this->checkreturn = (bool) $checkreturn;
     }
 
     /**
@@ -108,6 +164,21 @@ class SymfonyConsoleTask extends Task
         $cmd = $this->getCmdString();
 
         $this->log("executing $cmd");
-        passthru ($cmd);
+        $return = null;
+        $output = array();
+        exec($cmd, $output, $return);
+
+        $lines = implode("\r\n", $output);
+        
+        $this->log($lines, Project::MSG_INFO);
+        
+        if ($this->propertyName != null) {
+            $this->project->setProperty($this->propertyName, $lines);
+        }
+        
+        if ($return != 0 && $this->checkreturn) {
+            $this->log('Task exited with code: ' . $return, Project::MSG_ERR);
+            throw new BuildException("SymfonyConsole execution failed");
+        }
     }
 }

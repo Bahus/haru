@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 5ffc8c9c51dfa9bd0d691a88db670cdeb5f985c1 $
+ *  $Id: 5f0232559b3f287cdf33112b77518f1b4698c9d8 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'phing/BuildException.php';
  * Base class for Git tasks
  *
  * @author Victor Farazdagi <simple.square@gmail.com>
- * @version $Id: 5ffc8c9c51dfa9bd0d691a88db670cdeb5f985c1 $
+ * @version $Id: 5f0232559b3f287cdf33112b77518f1b4698c9d8 $
  * @package phing.tasks.ext.git
  * @see VersionControl_Git
  * @since 2.4.3
@@ -120,7 +120,7 @@ abstract class GitBaseTask extends Task
             } catch (VersionControl_Git_Exception $e) {
                 // re-package
                 throw new BuildException(
-                    'You must specify readable directory as repository.');
+                    'You must specify readable directory as repository.', $e);
 
             }
         }

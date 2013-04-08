@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: 577374dcb65bb9a2614bc80f605ce49600d64778 $
+ *  $Id: 8f34abee863fbe1d54b43c38d69a87940c7d000f $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,7 +30,7 @@ include_once 'phing/system/io/FileWriter.php';
  *        - Add support for arrays (separated by ',')
  *
  * @package    phing.system.util
- * @version $Id: 577374dcb65bb9a2614bc80f605ce49600d64778 $
+ * @version $Id: 8f34abee863fbe1d54b43c38d69a87940c7d000f $
  */
 class Properties {
 
@@ -91,7 +91,16 @@ class Properties {
         if (($lines = @file($filePath)) === false) {
             throw new IOException("Unable to parse contents of $filePath");
         }
-        
+
+        // concatenate lines ending with backslash
+        $linesCount = count($lines);
+        for($i = 0; $i < $linesCount; $i++) {
+            if (substr($lines[$i], -2, 1) === '\\') {
+                $lines[$i + 1] = substr($lines[$i], 0, -2) . ltrim($lines[$i + 1]);
+                $lines[$i] = '';
+            }
+        }
+
         $this->properties = array();
         $sec_name = "";
         

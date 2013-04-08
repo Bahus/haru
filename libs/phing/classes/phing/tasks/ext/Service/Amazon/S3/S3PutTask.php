@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 84b1d6039427591cbf43dbe1a82691063ae4238a $
+ *  $Id: 334f64383dde9b06cc259690e391c2b85cc90477 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,7 +24,7 @@ require_once dirname(dirname(__FILE__)) . '/S3.php';
 /**
  * Stores an object on S3
  * 
- * @version $Id: 84b1d6039427591cbf43dbe1a82691063ae4238a $
+ * @version $Id: 334f64383dde9b06cc259690e391c2b85cc90477 $
  * @package phing.tasks.ext
  * @author Andrei Serdeliuc <andrei@serdeliuc.ro>
  * @extends Service_Amazon_S3
@@ -73,6 +73,56 @@ class S3PutTask extends Service_Amazon_S3
 	 * @access protected
 	 */
 	protected $_createBuckets = false;
+	
+	/**
+	 * File ACL
+	 * Use to set the permission to the uploaded files
+	 *
+	 * (default value: 'private')
+	 *
+	 * @var string
+	 * @access protected
+	 */
+	protected $_acl = 'private';
+	
+	/**
+	 * File content type
+	 * Use this to set the content type of your static files
+	 * Set contentType to "auto" if you want to autodetect the content type based on the source file extension
+	 *
+	 * (default value: 'binary/octet-stream')
+	 *
+	 * @var string
+	 * @access protected
+	 */
+	protected $_contentType = 'binary/octet-stream';
+	
+	/**
+	 * Extension content type mapper
+	 *
+	 * @var array
+	 * @access protected
+	 */
+	protected $_extensionContentTypeMapper = array(
+		'js'	=> 'application/x-javascript',
+		'css'	=> 'text/css',
+		'html'	=> 'text/html',
+		'gif'	=> 'image/gif',
+		'png'	=> 'image/png',
+		'jpg'	=> 'image/jpeg',
+		'jpeg'	=> 'image/jpeg',
+		'txt'	=> 'text/plain'
+	);
+
+	/**
+	* Whether filenames contain paths
+	* 
+	* (default value: false)
+	* 
+	* @var bool
+	* @access protected
+	*/
+	protected $_fileNameOnly = false;
     
     public function setSource($source)
     {
@@ -127,6 +177,39 @@ class S3PutTask extends Service_Amazon_S3
 		
 		return $this->_object;
 	}
+	
+	public function setAcl($permission)
+	{
+		$valid_acl = array('private', 'public-read', 'public-read-write', 'authenticated-read');
+		if(empty($permission) || !is_string($permission) || !in_array($permission, $valid_acl)) {
+			throw new BuildException('Object must be one of the following values: ' . implode('|', $valid_acl));
+		}
+		$this->_acl = $permission;
+	}
+
+	public function getAcl()
+	{
+		return $this->_acl;
+	}
+	
+	public function setContentType($contentType) 
+	{
+		$this->_contentType = $contentType;
+	}
+
+	public function getContentType()
+	{
+		if($this->_contentType === 'auto') {
+			$ext = strtolower(substr(strrchr($this->getSource(), '.'), 1));
+			if(isset($this->_extensionContentTypeMapper[$ext])) {
+				return $this->_extensionContentTypeMapper[$ext];
+			} else {
+				return 'binary/octet-stream';
+			}
+		} else {
+			return $this->_contentType;
+		}
+	}
 
 	public function setCreateBuckets($createBuckets)
     {
@@ -137,6 +220,11 @@ class S3PutTask extends Service_Amazon_S3
     {
         return (bool) $this->_createBuckets;
     }
+
+	public function setFileNameOnly($fileNameOnly)
+	{
+		$this->_fileNameOnly = (bool) $fileNameOnly;
+	}
 
 	/**
      * creator for _filesets
@@ -220,9 +308,17 @@ class S3PutTask extends Service_Amazon_S3
 			
 			$fromDir = $fs->getDir($this->getProject())->getAbsolutePath();
 			
-			foreach($objects as $object) {
-				$this->saveObject($object, file_get_contents($fromDir . DIRECTORY_SEPARATOR . $object));
-			}
+		            if ($this->_fileNameOnly) {
+		                foreach ($objects as $object) {
+		                    $this->_source = $object;
+		                    $this->saveObject(basename($object), file_get_contents($fromDir . DIRECTORY_SEPARATOR . $object));
+		                }
+		            } else {
+		                foreach ($objects as $object) {
+		                    $this->_source = $object;
+		                    $this->saveObject(str_replace('\\', '/', $object), file_get_contents($fromDir . DIRECTORY_SEPARATOR . $object));
+		                }
+		            }
 			
 			return true;
 		}
@@ -234,6 +330,8 @@ class S3PutTask extends Service_Amazon_S3
 	{
 		$object = $this->getObjectInstance($object);
 		$object->data = $data;
+		$object->acl = $this->getAcl();
+		$object->contentType = $this->getContentType();
 		$object->save();
 		
 		if(!$this->isObjectAvailable($object->key)) {

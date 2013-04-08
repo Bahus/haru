@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id: 69074307e3d1aae5fbfaa03842f5a8fc14b49625 $
+ * $Id: af135f5c4e71eea0c306f028a6d5ac7b86be1d08 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -22,16 +22,16 @@
 require_once 'phing/tasks/system/condition/ConditionBase.php';
 
 /**
- *  <and> condition container.
+ * <and> condition container.
  *
- *  Iterates over all conditions and returns false as soon as one
- *  evaluates to false.
+ * Iterates over all conditions and returns false as soon as one
+ * evaluates to false.
  * 
- *  @author    Hans Lellelid <hans@xmpl.org>
- *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright 2001,2002 THYRELL. All rights reserved
- *  @version   $Id$
- *  @package   phing.tasks.system.condition
+ * @author    Hans Lellelid <hans@xmpl.org>
+ * @author    Andreas Aderhold <andi@binarycloud.com>
+ * @copyright 2001,2002 THYRELL. All rights reserved
+ * @version   $Id: af135f5c4e71eea0c306f028a6d5ac7b86be1d08 $
+ * @package   phing.tasks.system.condition
  */
 class AndCondition extends ConditionBase implements Condition {
 

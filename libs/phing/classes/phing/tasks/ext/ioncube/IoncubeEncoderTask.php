@@ -1,6 +1,6 @@
 <?php
 /**
- * $Id: a6ce870b3d14be7f365468e3a272e5ac16128e93 $
+ * $Id: b72d02e8f0d73e9a0533c249bcee161beeca5fb0 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +28,7 @@ require_once 'phing/tasks/ext/ioncube/IoncubeComment.php';
  * @author Michiel Rook <mrook@php.net>
  * @author Andrew Eddie <andrew.eddie@jamboworks.com> 
  * @author Domenico Sgarbossa <sbraaaa@yahoo.it> 
- * @version $Id: a6ce870b3d14be7f365468e3a272e5ac16128e93 $
+ * @version $Id: b72d02e8f0d73e9a0533c249bcee161beeca5fb0 $
  * @package phing.tasks.ext.ioncube
  * @since 2.2.0
  */
@@ -547,7 +547,12 @@ class IoncubeEncoderTask extends Task
     {
         $arguments = $this->constructArguments();
         
-        $encoder = new PhingFile($this->ioncubePath, $this->encoderName . ($this->phpVersion == 5 ? '5' : ''));
+        if (in_array($this->phpVersion, array(5, 53))) {
+            $encoderName = $this->encoderName . $this->phpVersion;
+        } else {
+            $encoderName = $this->encoderName;
+        }
+        $encoder = new PhingFile($this->ioncubePath, $encoderName);
         
         $this->log("Running ionCube Encoder...");
        

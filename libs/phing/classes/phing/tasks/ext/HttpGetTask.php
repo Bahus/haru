@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id: f3fa317b72e2f70f1e483fa49dbf089094e2a476 $
+ * $Id: 6013455856a997f45128c14715e7ec4b09017f7b $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +28,7 @@ require_once 'phing/Task.php';
  *
  * @package phing.tasks.ext
  * @author  Ole Markus With <o.with@sportradar.com>
- * @version $Id: f3fa317b72e2f70f1e483fa49dbf089094e2a476 $
+ * @version $Id: 6013455856a997f45128c14715e7ec4b09017f7b $
  */
 class HttpGetTask extends Task
 {
@@ -52,7 +52,21 @@ class HttpGetTask extends Task
      * @var string
      */
     protected $dir = null;
+
+    /**
+     * Holds value for "ssl_verify_peer" option
+     *
+     * @var boolean
+     */
+    protected $sslVerifyPeer = true;
     
+    /**
+     * Holds value for "follow_redirects" option
+     *
+     * @var null|bool
+     */
+    protected $followRedirects = null;
+
     /**
      * Holds the proxy
      *
@@ -100,6 +114,12 @@ class HttpGetTask extends Task
             $config['proxy_password'] = $url['pass'];
             $config['proxy_host'] = $url['host'];
             $config['proxy_port'] = $url['port'];
+        }
+
+        $config['ssl_verify_peer'] = $this->sslVerifyPeer;
+        
+        if (null !== $this->followRedirects) {
+            $config['follow_redirects'] = $this->followRedirects;
         }
 
         $this->log("Fetching " . $this->url);
@@ -157,6 +177,26 @@ class HttpGetTask extends Task
      */
     public function setDir($dir) {
         $this->dir = $dir;
+    }
+
+    /**
+     * Sets the ssl_verify_peer option
+     *
+     * @param bool $value
+     */
+    public function setSslVerifyPeer($value)
+    {
+        $this->sslVerifyPeer = $value;
+    }
+    
+    /**
+     * Sets the follow_redirects option
+     *
+     * @param bool $value
+     */
+    public function setFollowRedirects($value)
+    {
+        $this->followRedirects = $value;
     }
 
     /**

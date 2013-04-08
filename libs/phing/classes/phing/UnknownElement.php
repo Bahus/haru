@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: a4e6c2e3f776c5a353e52fb8518b3533f14a97c4 $
+ *  $Id: aba1d73cc012ecc9885d6950db7a9340a01c7ed4 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,7 +31,7 @@ require_once 'phing/Task.php';
  *
  * @author    Andreas Aderhold <andi@binarycloud.com>
  * @author    Hans Lellelid <hans@xmpl.org>
- * @version   $Id$
+ * @version   $Id: aba1d73cc012ecc9885d6950db7a9340a01c7ed4 $
  * @package   phing
  */
 class UnknownElement extends Task {
@@ -109,10 +109,10 @@ class UnknownElement extends Task {
     /**
      *  Handle child elemets of the unknown element, if any.
      *
-     *  @param ProjectComponent The parent object the unkown element belongs to
-     *  @param object The parent wrapper object
+     *  @param object $parent The parent object the unkown element belongs to
+     *  @param object $parentWrapper The parent wrapper object
      */
-    function handleChildren(ProjectComponent $parent, $parentWrapper) {
+    function handleChildren($parent, $parentWrapper) {
 
         if ($parent instanceof TaskAdapter) {
             $parent = $parent->getProxy();
@@ -139,9 +139,7 @@ class UnknownElement extends Task {
                 $realChild->setRuntimeConfigurableWrapper($childWrapper);
             }
             
-            if ($realChild instanceof ProjectComponent) {
-                $child->handleChildren($realChild, $childWrapper);
-            }
+            $child->handleChildren($realChild, $childWrapper);
             
             if ($realChild instanceof Task) {
                 $realChild->maybeConfigure();
@@ -197,8 +195,9 @@ class UnknownElement extends Task {
             $this->project->addReference($attrs['id'], $task);
         }
 
-        // UnknownElement always has an associated target
-        $task->setOwningTarget($this->target);
+        if ($this->target !== null) {
+            $task->setOwningTarget($this->target);
+        }
 
         $task->init();
         return $task;

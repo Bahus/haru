@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 891b349dcd88b825ae99edf53ed4c7ac2c1c2467 $
+ *  $Id: c9ff30aa2536b3d352865f4cc12a987dfa4c7a72 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -160,7 +160,7 @@ class Commandline {
     public static function quoteArgument($argument, $escape = false) {
         if ($escape) {
             return escapeshellarg($argument);
-        } elseif (strpos($argument, "\"") !== false) {
+        } elseif (strpos($argument, "\"") !== false && $argument != '""') {
             if (strpos($argument, "'") !== false) {
                 throw new BuildException("Can't handle single and double quotes in same argument");
             } else {

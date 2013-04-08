@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 8cd2a3322c659a5de7fcb47e21192730e5cc863d $
+ *  $Id: ecd64a90c33df464de6f75bf2878d382d815b458 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -22,13 +22,13 @@
 require_once 'phing/Task.php';
 
 /**
- *  Use introspection to "adapt" an arbitrary ( not extending Task, but with
- *  similar patterns).
+ * Use introspection to "adapt" an arbitrary ( not extending Task, but with
+ * similar patterns).
  *
- *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright 2001,2002 THYRELL. All rights reserved
- *  @version   $Id$
- *  @package   phing
+ * @author    Andreas Aderhold <andi@binarycloud.com>
+ * @copyright 2001,2002 THYRELL. All rights reserved
+ * @version   $Id: ecd64a90c33df464de6f75bf2878d382d815b458 $
+ * @package   phing
  */
 class TaskAdapter extends Task {
     

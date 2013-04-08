@@ -1,6 +1,6 @@
 <?php
 /**
- * $Id: 36ffb2ececed4c83c9ca7ad3674b3fa11074f2a5 $
+ * $Id: 2681aa7a1f3448a70c94b8b61d4de6b57975faa8 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'phing/tasks/ext/svn/SvnBaseTask.php';
  * Parses the output of 'svn info --xml' and
  *
  * @author Michiel Rook <mrook@php.net>
- * @version $Id: 36ffb2ececed4c83c9ca7ad3674b3fa11074f2a5 $
+ * @version $Id: 2681aa7a1f3448a70c94b8b61d4de6b57975faa8 $
  * @package phing.tasks.ext.svn
  * @see VersionControl_SVN
  * @since 2.4.9
@@ -94,19 +94,33 @@ class SvnInfoTask extends SvnBaseTask
     function main()
     {
         $this->setup('info');
+        
+        if ($this->oldVersion) {
+            $output = $this->run(array('--xml', '--incremental'));
 
-        $output = $this->run(array('--xml', '--incremental'));
+            if (!($xmlObj = @simplexml_load_string($output))) {
+                throw new BuildException("Failed to parse the output of 'svn info --xml'.");
+            }
             
-        if ($xmlObj = @simplexml_load_string($output)) {
             $object = $xmlObj->{$this->element};
             
             if (!empty($this->subElement)) {
                 $object = $object->{$this->subElement};
             }
-                
-            $this->project->setProperty($this->getPropertyName(), (string) $object);
         } else {
-            throw new BuildException("Failed to parse the output of 'svn info --xml'.");
+            $output = $this->run();
+            
+            if (empty($output) || !isset($output['entry'][0])) {
+                throw new BuildException("Failed to parse the output of 'svn info'.");
+            }
+            
+            $object = $output['entry'][0][$this->element];
+            
+            if (!empty($this->subElement)) {
+                $object = $object[$this->subElement];
+            }
         }
+        
+        $this->project->setProperty($this->getPropertyName(), (string) $object);
     }
 }

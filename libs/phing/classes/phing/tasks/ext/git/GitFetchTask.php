@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: bcddbc1cd2e77003746b048568da8111b48da2fb $
+ *  $Id: 5f4c185c70d50c008c55f9b72cee91305bdcf596 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'phing/tasks/ext/git/GitBaseTask.php';
  * Wrapper aroung git-fetch
  *
  * @author Victor Farazdagi <simple.square@gmail.com>
- * @version $Id: bcddbc1cd2e77003746b048568da8111b48da2fb $
+ * @version $Id: 5f4c185c70d50c008c55f9b72cee91305bdcf596 $
  * @package phing.tasks.ext.git
  * @see VersionControl_Git
  * @since 2.4.3
@@ -137,7 +137,7 @@ class GitFetchTask extends GitBaseTask
         try {
             $output = $command->execute();
         } catch (Exception $e) {
-            throw new BuildException('Task execution failed.');
+            throw new BuildException('Task execution failed.', $e);
         }
 
         $this->log(

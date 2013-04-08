@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: d63246e2d25230f5ba6e45a651497e3ba01abe2c $
+ *  $Id: e162c4727fe7f12c165954d5ac494e9120060b3c $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -22,13 +22,13 @@
 require_once 'phing/tasks/system/condition/ConditionBase.php';
 
 /**
- *  Condition that tests the OS type.
+ * Condition that tests the OS type.
  *
- *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright 2001,2002 THYRELL. All rights reserved
- *  @version   $Id$
- *  @access    public
- *  @package   phing.tasks.system.condition
+ * @author    Andreas Aderhold <andi@binarycloud.com>
+ * @copyright 2001,2002 THYRELL. All rights reserved
+ * @version   $Id: e162c4727fe7f12c165954d5ac494e9120060b3c $
+ * @access    public
+ * @package   phing.tasks.system.condition
  */
 class OsCondition implements Condition {
 

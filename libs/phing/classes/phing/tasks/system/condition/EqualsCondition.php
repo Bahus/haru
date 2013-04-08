@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: faec716501a00cdeb84b8c893b5bbe5c76064dec $
+ *  $Id: 9827cf0156c85ef453f99b60353c474650b4dc5f $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -22,14 +22,14 @@
 require_once 'phing/tasks/system/condition/Condition.php';
 
 /**
- *  A simple string comparator.  Compares two strings for eqiality in a
- *  binary safe manner. Implements the condition interface specification.
+ * A simple string comparator.  Compares two strings for eqiality in a
+ * binary safe manner. Implements the condition interface specification.
  *
- *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright 2001,2002 THYRELL. All rights reserved
- *  @version   $Id: faec716501a00cdeb84b8c893b5bbe5c76064dec $
- *  @access    public
- *  @package   phing.tasks.system.condition
+ * @author    Andreas Aderhold <andi@binarycloud.com>
+ * @copyright 2001,2002 THYRELL. All rights reserved
+ * @version   $Id: 9827cf0156c85ef453f99b60353c474650b4dc5f $
+ * @access    public
+ * @package   phing.tasks.system.condition
  */
 class EqualsCondition implements Condition {
 

@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: c5ebadd12256533d9ca4d6fb6cabd50415bdddbf $
+ *  $Id: 6896953cc306b5c127093535b56385a824921b2f $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -22,14 +22,13 @@
 include_once 'phing/Task.php';
 
 /**
- *  Echos a message to the logging system or to a file
+ * Echos a message to the logging system or to a file
  *
- *  @author   Michiel Rook <mrook@php.net>
- *  @author   Andreas Aderhold, andi@binarycloud.com
- *  @version  $Id$
- *  @package  phing.tasks.system
+ * @author   Michiel Rook <mrook@php.net>
+ * @author   Andreas Aderhold, andi@binarycloud.com
+ * @version  $Id: 6896953cc306b5c127093535b56385a824921b2f $
+ * @package  phing.tasks.system
  */
-
 class EchoTask extends Task {
     
     protected $msg = "";

@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 88eafadfcd59c0ce28f122926b7d5706b807a8e3 $
+ *  $Id: e6d4ab4db81ef6852836b1bbc959877efe6e32bb $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -39,7 +39,7 @@ require_once 'phing/parser/ProjectConfigurator.php';
  * dependencies or via the <phing> or <phingcall> task mechanisms.
  *
  * @author Bryan Davis <bpd@keynetics.com>
- * @version $Id: 88eafadfcd59c0ce28f122926b7d5706b807a8e3 $
+ * @version $Id: e6d4ab4db81ef6852836b1bbc959877efe6e32bb $
  * @package phing.tasks.system
  */
 class ImportTask extends Task {
@@ -127,7 +127,7 @@ class ImportTask extends Task {
       // Since this is delayed until after the importing file has been 
       // processed, the properties and targets of this new file may not take 
       // effect if they have alreday been defined in the outer scope.
-      $this->log("Importing configuration from {$file->getName()}", Project::MSG_VERBOSE);
+      $this->log("Importing configuration from {$file->getAbsolutePath()}", Project::MSG_VERBOSE);
       ProjectConfigurator::configureProject($this->project, $file);
       $this->log("Configuration imported.", Project::MSG_VERBOSE);
     }

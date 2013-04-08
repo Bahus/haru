@@ -1,6 +1,6 @@
 <?php
 /**
- * $Id: 5dfcc23bc58efaad0eb11ef4964bcd7be0fb99e9 $
+ * $Id: fdbd2a7ba853105acdf1887bee0e186eb125dfe8 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +28,7 @@ require_once 'phing/tasks/ext/svn/SvnBaseTask.php';
  *
  * @author Anton Stöckl <anton@stoeckl.de>
  * @author Michiel Rook <mrook@php.net> (SvnLastRevisionTask)
- * @version $Id: 5dfcc23bc58efaad0eb11ef4964bcd7be0fb99e9 $
+ * @version $Id: fdbd2a7ba853105acdf1887bee0e186eb125dfe8 $
  * @package phing.tasks.ext.svn
  * @see VersionControl_SVN
  * @since 2.1.0
@@ -36,7 +36,6 @@ require_once 'phing/tasks/ext/svn/SvnBaseTask.php';
 class SvnListTask extends SvnBaseTask
 {
     private $propertyName = "svn.list";
-    private $forceCompatible = true;
     private $limit = null;
     private $orderDescending = false;
 
@@ -58,11 +57,10 @@ class SvnListTask extends SvnBaseTask
 
     /**
      * Sets whether to force compatibility with older SVN versions (< 1.2)
+     * @deprecated
      */
     public function setForceCompatible($force)
     {
-        //$this->forceCompatible = (bool) $force;
-        // see below, we need this to be true as xml mode does not work
     }
 
     /**
@@ -89,40 +87,54 @@ class SvnListTask extends SvnBaseTask
     function main()
     {
         $this->setup('list');
-
-        if ($this->forceCompatible) {
-            $output = $this->run(array('--verbose'));
-            $result = null;
-
-            $lines = $output['.']['name'];
-
-            if ($this->orderDescending) {
-                $lines = array_reverse($lines);
+        
+        if ($this->oldVersion) {
+            $this->svn->setOptions(array('fetchmode' => VERSIONCONTROL_SVN_FETCHMODE_XML));
+            $output = $this->run(array('--xml'));
+            
+            if (!($xmlObj = @simplexml_load_string($output))) {
+                throw new BuildException("Failed to parse the output of 'svn list --xml'.");
             }
-
-            $count = 0;
-            foreach ($lines as $line) {
-                if ($this->limit > 0 && $count >= $this->limit) {
-                    break;
-                }
-                if (preg_match('@\s+(\d+)\s+(\S+)\s+(\S+ \S+ \S+)\s+(\S+)@', $line, $matches)) {
-                    if ($matches[4] == '.') {
-                        continue;
-                    }
-                    $result .= (!empty($result)) ? "\n" : '';
-                    $result .= $matches[1] . ' | ' . $matches[2] . ' | ' . $matches[3] . ' | ' . $matches[4];
-                    $count++;
-                }
-            }
-
-            if (!empty($result)) {
-                $this->project->setProperty($this->getPropertyName(), $result);
-            } else {
-                throw new BuildException("Failed to parse the output of 'svn list --verbose'.");
+            
+            $objects = $xmlObj->list->entry;
+            $entries = array();
+            
+            foreach ($objects as $object) {
+                $entries[] = array(
+                    'commit' => array(
+                        'revision' => (string) $object->commit['revision'],
+                        'author'   => (string) $object->commit->author,
+                        'date'     => (string) $object->commit->date
+                    ),
+                    'name' => (string) $object->name
+                );
             }
         } else {
-            // this is not possible at the moment as SvnBaseTask always uses fetchmode ASSOC
-            // which transfers everything into nasty assoc array instead of xml
+            $output = $this->run(array());
+            $entries = $output['list'][0]['entry'];
+        }
+        
+        if ($this->orderDescending) {
+            $entries = array_reverse($entries);
+        }
+        
+        $result = null;
+        $count = 0;
+        
+        foreach ($entries as $entry) {
+            if ($this->limit > 0 && $count >= $this->limit) {
+                break;
+            }
+            
+            $result .= (!empty($result)) ? "\n" : '';
+            $result .= $entry['commit']['revision'] . ' | ' . $entry['commit']['author'] . ' | ' . $entry['commit']['date'] . ' | ' . $entry['name'];
+            $count++;
+        }
+
+        if (!empty($result)) {
+            $this->project->setProperty($this->getPropertyName(), $result);
+        } else {
+            throw new BuildException("Failed to parse the output of 'svn list'.");
         }
     }
 }

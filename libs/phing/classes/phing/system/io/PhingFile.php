@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: d2cfaf834a2cc605a3aedf37285f547010b8b4f4 $
+ *  $Id: aa9e601342201eab334a91cdf4e3b20c15913ca8 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,7 +25,7 @@ include_once 'phing/system/lang/NullPointerException.php';
 /**
  * An abstract representation of file and directory pathnames.
  *
- * @version   $Id$
+ * @version   $Id: aa9e601342201eab334a91cdf4e3b20c15913ca8 $
  * @package   phing.system.io
  */
 class PhingFile {
@@ -445,15 +445,15 @@ class PhingFile {
      * @return boolean true if and only if the file denoted by this
      *                 abstract pathname exists; false otherwise
      */
-    function exists() {                
+    function exists() {
         clearstatcache();
-        
+
         if (is_link($this->path)) {
             return true;
-        } else if ($this->isFile()) {
-            return @file_exists($this->path) || is_link($this->path);
+        } else if ($this->isDirectory()) {
+            return true;
         } else {
-            return @is_dir($this->path);
+            return @file_exists($this->path) || is_link($this->path);
         }
     }
 

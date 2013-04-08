@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 8c8f9369e06a3467e34fc8d89f6355df048ece90 $
+ *  $Id: 2194d6e6307b4c64d60ec3d83975583fcaca5c03 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,7 +25,7 @@ require_once 'phing/Task.php';
  * A PHP code sniffer task. Checking the style of one or more PHP source files.
  *
  * @author  Dirk Thomas <dirk.thomas@4wdmedia.de>
- * @version $Id: 8c8f9369e06a3467e34fc8d89f6355df048ece90 $
+ * @version $Id: 2194d6e6307b4c64d60ec3d83975583fcaca5c03 $
  * @package phing.tasks.ext
  */
 class PhpCodeSnifferTask extends Task {
@@ -41,7 +41,7 @@ class PhpCodeSnifferTask extends Task {
     protected $reportWidth = 80;
     protected $verbosity = 0;
     protected $tabWidth = 0;
-    protected $allowedFileExtensions = array('php');
+    protected $allowedFileExtensions = array('php', 'inc', 'js', 'css');
     protected $ignorePatterns = false;
     protected $noSubdirectories = false;
     protected $configData = array();
@@ -197,7 +197,7 @@ class PhpCodeSnifferTask extends Task {
     {
         $this->tabWidth = (int)$width;
     }
-    
+
     /**
      * Sets file encoding
      * @param string $encoding
@@ -301,7 +301,7 @@ class PhpCodeSnifferTask extends Task {
     {
         $this->haltonwarning = $value;
     }
-    
+
     /**
      * Sets the skipversioncheck flag
      * @param boolean $value
@@ -317,7 +317,7 @@ class PhpCodeSnifferTask extends Task {
     public function main() {
         if (!class_exists('PHP_CodeSniffer')) {
             @include_once 'PHP/CodeSniffer.php';
-            
+
             if (!class_exists('PHP_CodeSniffer')) {
                 throw new BuildException("This task requires the PHP_CodeSniffer package installed and available on the include path", $this->getLocation());
             }
@@ -391,11 +391,15 @@ class PhpCodeSnifferTask extends Task {
         }
 
         $cwd = getcwd();
+        
         // Save command line arguments because it confuses PHPCS (version 1.3.0)
         $oldArgs = $_SERVER['argv'];
         $_SERVER['argv'] = array();
         $_SERVER['argc'] = 0;
-        $codeSniffer = new PHP_CodeSniffer($this->verbosity, $this->tabWidth, $this->encoding);
+        
+        include_once 'phing/tasks/ext/phpcs/PhpCodeSnifferTask_Wrapper.php';
+        
+        $codeSniffer = new PhpCodeSnifferTask_Wrapper($this->verbosity, $this->tabWidth, $this->encoding);
         $codeSniffer->setAllowedFileExtensions($this->allowedFileExtensions);
         if (is_array($this->ignorePatterns)) $codeSniffer->setIgnorePatterns($this->ignorePatterns);
         foreach ($this->configData as $configData) {
@@ -408,11 +412,6 @@ class PhpCodeSnifferTask extends Task {
         } else {
             $codeSniffer->process($fileList, $this->standard, $this->sniffs, $this->noSubdirectories);
         }
-        // Restore command line arguments
-        $_SERVER['argv'] = $oldArgs;
-        $_SERVER['argc'] = count($oldArgs);
-        chdir($cwd);
-
         $report = $this->printErrorReport($codeSniffer);
 
         // generate the documentation
@@ -444,6 +443,10 @@ class PhpCodeSnifferTask extends Task {
         {
             throw new BuildException('phpcodesniffer detected ' . $report['totals']['warnings'] . ' warning' . ($report['totals']['warnings'] > 1 ? 's' : ''));
         }
+        
+        $_SERVER['argv'] = $oldArgs;
+        $_SERVER['argc'] = count($oldArgs);
+        chdir($cwd);
     }
 
     /**
@@ -460,7 +463,11 @@ class PhpCodeSnifferTask extends Task {
             $sniffs = $phpcs->getSniffs();
             $sniffStr = '';
             foreach ($sniffs as $sniff) {
-                $sniffStr .= '- ' . $sniff.PHP_EOL;
+                if (is_string($sniff)) {
+                    $sniffStr .= '- ' . $sniff . PHP_EOL;
+                } else {
+                    $sniffStr .= '- ' . get_class($sniff) . PHP_EOL;
+                }
             }
             $this->log('The list of used sniffs (#' . count($sniffs) . '): ' . PHP_EOL . $sniffStr, Project::MSG_INFO);
         }
@@ -546,7 +553,7 @@ class PhpCodeSnifferTask extends Task {
 
         $totalErrors = $report['totals']['errors'];
         $totalWarnings = $report['totals']['warnings'];
-        $this->log(count($files) . ' files where checked', Project::MSG_INFO);
+        $this->log(count($files) . ' files were checked', Project::MSG_INFO);
         if ($totalErrors > 0) {
             $this->log($totalErrors . ' error' . ($totalErrors > 1 ? 's' : '') . ' detected', Project::MSG_ERR);
         } else {

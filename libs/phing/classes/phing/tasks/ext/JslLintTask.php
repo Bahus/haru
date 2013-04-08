@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 551de2e94aa21f44e19dd0806051f1eabf8b20f9 $
+ *  $Id: b448058c7244156ae7eb314c64618de82ff831cc $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +28,7 @@ require_once 'phing/util/DataStore.php';
  * This class is based on Knut Urdalen's PhpLintTask.
  *
  * @author Stefan Priebsch <stefan.priebsch@e-novative.de>
- * @version $Id: 551de2e94aa21f44e19dd0806051f1eabf8b20f9 $
+ * @version $Id: b448058c7244156ae7eb314c64618de82ff831cc $
  * @package phing.tasks.ext
  */
 class JslLintTask extends Task
@@ -38,7 +38,9 @@ class JslLintTask extends Task
 
     protected $showWarnings = true;
     protected $haltOnFailure = false;
-    protected $hasErrors = false;
+    protected $haltOnWarning = false;
+    protected $hasErrors   = false;
+    protected $hasWarnings = false;
     private $badFiles = array();
 
     private $cache = null;
@@ -65,6 +67,14 @@ class JslLintTask extends Task
      */
     public function setHaltOnFailure($aValue) {
         $this->haltOnFailure = $aValue;
+    }
+
+    /**
+     * The haltonwarning property
+     * @param boolean $aValue
+     */
+    public function setHaltOnWarning($aValue) {
+        $this->haltOnWarning = $aValue;
     }
 
     /**
@@ -167,6 +177,7 @@ class JslLintTask extends Task
         }
 
         if ($this->haltOnFailure && $this->hasErrors) throw new BuildException('Syntax error(s) in JS files:' .implode(', ', array_keys($this->badFiles)));
+        if ($this->haltOnWarning && $this->hasWarnings) throw new BuildException('Syntax warning(s) in JS files:' .implode(', ', array_keys($this->badFiles)));
     }
 
     /**
@@ -249,6 +260,7 @@ class JslLintTask extends Task
                     foreach ($warnings as $warning) {
                         $this->log('- line ' . $warning['line'] . (isset($warning['column']) ? ' column ' . $warning['column'] : '') . ': ' . $warning['message'], Project::MSG_WARN);
                     }
+                    $this->hasWarnings = true;
                 }
 
                 if($errorCount > 0)

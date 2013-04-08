@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 0efe41b73233dd4396055518a125e4ff642693c5 $
+ *  $Id: 8b8c86a579ff95bcef3bb672916d6abee1f06d25 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,13 +23,12 @@ require_once 'phing/Task.php';
 require_once 'phing/tasks/ext/dbdeploy/DbmsSyntax.php';
 
 /**
- *  Factory for generating dbms-specific syntax-generating objects
+ * Factory for generating dbms-specific syntax-generating objects
  *
- *  @author   Luke Crouch at SourceForge (http://sourceforge.net)
- *  @version  $Id$
- *  @package  phing.tasks.ext.dbdeploy
+ * @author   Luke Crouch at SourceForge (http://sourceforge.net)
+ * @version  $Id: 8b8c86a579ff95bcef3bb672916d6abee1f06d25 $
+ * @package  phing.tasks.ext.dbdeploy
  */
-
 class DbmsSyntaxFactory
 {
     private $dbms;

@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 82fabd65e9247cb37fa3fe16c122d525db4fc697 $
+ *  $Id: f63388b05d838082c81498058ce37fa8a1c9c899 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'phing/tasks/ext/git/GitBaseTask.php';
  * Wrapper aroung git-merge
  *
  * @author Victor Farazdagi <simple.square@gmail.com>
- * @version $Id: 82fabd65e9247cb37fa3fe16c122d525db4fc697 $
+ * @version $Id: f63388b05d838082c81498058ce37fa8a1c9c899 $
  * @package phing.tasks.ext.git
  * @see VersionControl_Git
  * @since 2.4.3
@@ -146,7 +146,7 @@ class GitMergeTask extends GitBaseTask
         try {
             $output = $command->execute();
         } catch (Exception $e) {
-            throw new BuildException('Task execution failed.');
+            throw new BuildException('Task execution failed.', $e);
         }
 
         $this->log(

@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: a01e7e9f6cc92e419e82b4e99e4a45de6a61eba8 $
+ *  $Id: dd51abeec38d00b4cc90a2096a8c39cb61592fe7 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'phing/tasks/ext/git/GitBaseTask.php';
  * Wrapper aroung git-push
  *
  * @author Victor Farazdagi <simple.square@gmail.com>
- * @version $Id: a01e7e9f6cc92e419e82b4e99e4a45de6a61eba8 $
+ * @version $Id: dd51abeec38d00b4cc90a2096a8c39cb61592fe7 $
  * @package phing.tasks.ext.git
  * @see VersionControl_Git
  * @since 2.4.3
@@ -129,7 +129,7 @@ class GitPushTask extends GitBaseTask
         try {
             $output = $command->execute();
         } catch (Exception $e) {
-            throw new BuildException('Task execution failed.');
+            throw new BuildException('Task execution failed.', $e);
         }
 
         $this->log('git-push: complete', Project::MSG_INFO); 

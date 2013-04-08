@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 13487520850c3a7ad71d85f02afbddfd408bfbba $
+ *  $Id: 89570d112952630f91e96e78c238b93a976aaafd $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,7 +25,7 @@ require_once 'phing/tasks/ext/git/GitBaseTask.php';
  * Wrapper around git-gc
  *
  * @author Victor Farazdagi <simple.square@gmail.com>
- * @version $Id: 13487520850c3a7ad71d85f02afbddfd408bfbba $
+ * @version $Id: 89570d112952630f91e96e78c238b93a976aaafd $
  * @package phing.tasks.ext.git
  * @see VersionControl_Git
  * @since 2.4.3
@@ -83,7 +83,7 @@ class GitGcTask extends GitBaseTask
         try {
             $command->execute();
         } catch (Exception $e) {
-            throw new BuildException('Task execution failed');
+            throw new BuildException('Task execution failed', $e);
         }
 
         $this->log(

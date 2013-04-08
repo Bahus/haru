@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: a48723b4c3ef1e5c15417f5ea6e495960e5e018b $
+ *  $Id: 5b59f2c1958c0f2cc27c535f78a29a90b007c8fb $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,13 +20,12 @@
  */
  
 /**
- *  Utility class for generating necessary server-specific SQL commands
+ * Utility class for generating necessary server-specific SQL commands
  *
- *  @author   Luke Crouch at SourceForge (http://sourceforge.net)
- *  @version  $Id$
- *  @package  phing.tasks.ext.dbdeploy
+ * @author   Luke Crouch at SourceForge (http://sourceforge.net)
+ * @version  $Id: 5b59f2c1958c0f2cc27c535f78a29a90b007c8fb $
+ * @package  phing.tasks.ext.dbdeploy
  */
-
 class DbmsSyntaxSQLite extends DbmsSyntax 
 {
     public function generateTimestamp()

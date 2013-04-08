@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 7aef4b4e372e89055248ab063660dbee92a98cc3 $
+ *  $Id: e092ad3bc1b2a28320f23b721bea34a6c89719c4 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -106,12 +106,12 @@ include_once 'phing/types/selectors/SelectorUtils.php';
  * internally (like split()) are not used. Only the _fast_ string functions
  * and comparison operators (=== !=== etc) are used for matching and tokenizing.
  *
- *  @author   Arnout J. Kuiper, ajkuiper@wxs.nl
- *  @author   Magesh Umasankar, umagesh@rediffmail.com
- *  @author   Andreas Aderhold, andi@binarycloud.com
+ * @author   Arnout J. Kuiper, ajkuiper@wxs.nl
+ * @author   Magesh Umasankar, umagesh@rediffmail.com
+ * @author   Andreas Aderhold, andi@binarycloud.com
  *
- *  @version   $Id: 7aef4b4e372e89055248ab063660dbee92a98cc3 $
- *  @package   phing.util
+ * @version   $Id: e092ad3bc1b2a28320f23b721bea34a6c89719c4 $
+ * @package   phing.util
  */
 class DirectoryScanner implements SelectorScanner {
 

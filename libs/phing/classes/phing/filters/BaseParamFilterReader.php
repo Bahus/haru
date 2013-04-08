@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: 412cc012db35b1dcf3545b93d5053e727d66b61f $
+ *  $Id: 47304165121029790cb65ab42cece43eee1d6014 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,9 +27,9 @@ include_once 'phing/types/Parameter.php';
 /**
  * Base class for core filter readers.
  *
- * @author <a href="mailto:yl@seasonfive.com">Yannick Lecaillez</a>
- * @copyright � 2003 seasonfive. All rights reserved
- * @version   $Id$
+ * @author    <a href="mailto:yl@seasonfive.com">Yannick Lecaillez</a>
+ * @copyright 2003 seasonfive. All rights reserved
+ * @version   $Id: 47304165121029790cb65ab42cece43eee1d6014 $
  * @access    public
  * @see       FilterReader
  * @package   phing.filters

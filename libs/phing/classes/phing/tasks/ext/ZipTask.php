@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 6997b3f3abffedf1b2efabc40c3b2d012b2379cb $
+ *  $Id: 229ddb0dbbe62e6b16a9865eaae1a9100d41e910 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +28,7 @@ include_once 'phing/util/StringHelper.php';
  * Creates a zip archive using PHP ZipArchive extension/
  *
  * @author    Michiel Rook <mrook@php.net>
- * @version   $Id: 6997b3f3abffedf1b2efabc40c3b2d012b2379cb $
+ * @version   $Id: 229ddb0dbbe62e6b16a9865eaae1a9100d41e910 $
  * @package   phing.tasks.ext
  * @since     2.1.0
  */
@@ -110,8 +110,12 @@ class ZipTask extends MatchingTask {
      * do the work
      * @throws BuildException
      */
-    public function main() {
-    
+    public function main()
+    {
+        if (!extension_loaded('zip')) {
+            throw new BuildException("Zip extension is required");
+        }
+        
         if ($this->zipFile === null) {
             throw new BuildException("zipfile attribute must be set!", $this->getLocation());
         }

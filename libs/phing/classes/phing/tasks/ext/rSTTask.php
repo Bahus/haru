@@ -10,7 +10,7 @@
  * @author     Christian Weiske <cweiske@cweiske.de>
  * @license    LGPL v3 or later http://www.gnu.org/licenses/lgpl.html
  * @link       http://www.phing.info/
- * @version    SVN: $Id: ad2ac21008b4635c4f557e3a65c9306a350ca1f2 $
+ * @version    SVN: $Id: bc420f25ab51443575d2064ebc8b2d633a4b2f65 $
  */
 
 require_once 'phing/Task.php';
@@ -112,7 +112,7 @@ class rSTTask extends Task
      *
      * @var integer
      */
-    protected $mode = 0755;
+    protected $mode = 0;
 
     /**
      * Only render files whole source files are newer than the
@@ -122,6 +122,15 @@ class rSTTask extends Task
      */
     protected $uptodate = false;
 
+    /**
+     * Sets up this object internal stuff. i.e. the default mode
+     *
+     * @return object   The rSTTask instance
+     * @access public
+     */
+    function __construct() {
+        $this->mode = 0777 - umask();
+    }
 
     /**
      * Init method: requires the PEAR System class

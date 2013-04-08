@@ -1,7 +1,7 @@
 <?php
 
 /* 
- *  $Id: 235081905c0eafcd98da2fec63404fa2ebee090a $
+ *  $Id: bc979767c07b19eafeb3fc6f6efa938dd73bde18 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -35,7 +35,7 @@
  *    
  * @author Charlie Killian <charlie@tizac.com>
  * @author Hans Lellelid <hans@xmpl.org>
- * @version $Id$
+ * @version $Id: bc979767c07b19eafeb3fc6f6efa938dd73bde18 $
  * @package phing.system.io
  */
 abstract class FileSystem {    

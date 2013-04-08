@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 31dfd9d24212a4cf5afcce43a9ae337669bafc35 $  
+ *  $Id: 9514f945d9663070a6274d115fa089c562b488a6 $  
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -22,19 +22,19 @@
 require_once 'phing/tasks/system/condition/ConditionBase.php';
 
 /**
- *  <condition> task as a generalization of <available>
+ * <condition> task as a generalization of <available>
  *
- *  <p>This task supports boolean logic as well as pluggable conditions
- *  to decide, whether a property should be set.</p>
+ * <p>This task supports boolean logic as well as pluggable conditions
+ * to decide, whether a property should be set.</p>
  *
- *  <p>This task does not extend Task to take advantage of
- *  ConditionBase.</p>
+ * <p>This task does not extend Task to take advantage of
+ * ConditionBase.</p>
  *
- *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright 2001,2002 THYRELL. All rights reserved
- *  @version   $Id$
- *  @access    public
- *  @package   phing.tasks.system
+ * @author    Andreas Aderhold <andi@binarycloud.com>
+ * @copyright 2001,2002 THYRELL. All rights reserved
+ * @version   $Id: 9514f945d9663070a6274d115fa089c562b488a6 $
+ * @access    public
+ * @package   phing.tasks.system
  */
 class ConditionTask extends ConditionBase {
 

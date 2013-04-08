@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: be6f99d787b94f7f2c1c8e359def3d465386bba9 $
+ *  $Id: b65e6519296e4cdf083dbdf440526009cf9d8d17 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,15 +20,19 @@
  */
  
 /**
- *  Utility class for generating necessary server-specific SQL commands
+ * Utility class for generating necessary server-specific SQL commands
  *
- *  @author   Luke Crouch at SourceForge (http://sourceforge.net)
- *  @version  $Id$
- *  @package  phing.tasks.ext.dbdeploy
+ * @author   Luke Crouch at SourceForge (http://sourceforge.net)
+ * @version  $Id: b65e6519296e4cdf083dbdf440526009cf9d8d17 $
+ * @package  phing.tasks.ext.dbdeploy
  */
-
 class DbmsSyntaxOracle extends DbmsSyntax 
 {
+    public function applyAttributes($db)
+    {
+        $db->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
+    }
+    
     public function generateTimestamp()
     {
         return "(sysdate - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)";

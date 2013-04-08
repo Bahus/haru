@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 2078fd5bab3dd6dcea0345a12fce86a24586c765 $
+ *  $Id: 7b984d9a3ed56199306d228e72ca9da54ac43d07 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -74,7 +74,7 @@ include_once 'phing/types/FileSet.php';
  * 
  * @author   Hans Lellelid <hans@xmpl.org>
  * @package  phing.tasks.ext
- * @version  $Id: 2078fd5bab3dd6dcea0345a12fce86a24586c765 $
+ * @version  $Id: 7b984d9a3ed56199306d228e72ca9da54ac43d07 $
  */
 class PearPackageTask extends MatchingTask {
     
@@ -140,7 +140,7 @@ class PearPackageTask extends MatchingTask {
             // Some PHING-specific options needed by our Fileset reader
             $this->preparedOptions['phing_project'] = $this->project;
             $this->preparedOptions['phing_filesets'] = $this->filesets;
-        } elseif ($this->preparedOptions['filelistgeneragor'] != 'Fileset' && !empty($this->filesets)) {
+        } elseif ($this->preparedOptions['filelistgenerator'] != 'Fileset' && !empty($this->filesets)) {
             throw new BuildException("You cannot use <fileset> element if you have specified the \"filelistgenerator\" option.");
         }                
         

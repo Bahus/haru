@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: 3c108d45a4b3be6f6b9a395477e7641d8e17c44b $  
+ *  $Id: 79966fb4ce6b4e487a5c1eb246ad6ff29bfd6c3b $  
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -37,8 +37,8 @@ require_once 'phing/filters/BaseParamFilterReader.php';
  *
  * @author    <a href="mailto:yl@seasonfive.com">Yannick Lecaillez</a>
  * @author    hans lellelid, hans@velum.net
- * @copyright � 2003 seasonfive. All rights reserved
- * @version   $Id$
+ * @copyright 2003 seasonfive. All rights reserved
+ * @version   $Id: 79966fb4ce6b4e487a5c1eb246ad6ff29bfd6c3b $
  * @see       BaseParamFilterReader
  * @package   phing.filters
  */

@@ -1,6 +1,6 @@
 <?php
 /*
- * $Id: d74783e6edb73c6f11fbb93701f0bb6e7ccf06b1 $
+ * $Id: 447177e89a70b960dac284e3fd2fd9b891e031e8 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -22,12 +22,12 @@
 require_once 'phing/listener/DefaultLogger.php';
 
 /**
- *  Extends DefaultLogger to strip out empty targets.
+ * Extends DefaultLogger to strip out empty targets.
  *
- *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright 2001,2002 THYRELL. All rights reserved
- *  @version   $Id$
- *  @package   phing.listener
+ * @author    Andreas Aderhold <andi@binarycloud.com>
+ * @copyright 2001,2002 THYRELL. All rights reserved
+ * @version   $Id: 447177e89a70b960dac284e3fd2fd9b891e031e8 $
+ * @package   phing.listener
  */
 class NoBannerLogger extends DefaultLogger {
 

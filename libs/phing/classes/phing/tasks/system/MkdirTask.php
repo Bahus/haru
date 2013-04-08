@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: e7e3dbd896d8d46cd8694fca10d1d9a7b3ce54fc $
+ *  $Id: af4d193fb5a784ffcea55c9599c68a4fccb2a773 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ include_once 'phing/system/io/PhingFile.php';
  * Task to create a directory.
  *
  * @author   Andreas Aderhold, andi@binarycloud.com
- * @version  $Id$
+ * @version  $Id: af4d193fb5a784ffcea55c9599c68a4fccb2a773 $
  * @package  phing.tasks.system
  */
 class MkdirTask extends Task {
@@ -38,7 +38,17 @@ class MkdirTask extends Task {
      * Mode to create directory with
      * @var integer
      */
-    private $mode = 0755;
+    private $mode = 0;
+
+    /**
+     * Sets up this object internal stuff. i.e. the default mode
+     *
+     * @return object   The MkdirTask instance
+     * @access public
+     */
+    function __construct() {
+        $this->mode = 0777 - umask();
+    }
 
     /**
      * create the directory and all parents

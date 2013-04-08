@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 8721880badf6aee475a8cb87c88ca3dc4299efb8 $
+ *  $Id: 4e5e33bd5784d9b68fab402fb7c75d980c2fbbf4 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,19 +23,21 @@ require_once 'phing/ProjectComponent.php';
 include_once 'phing/Project.php';
 include_once 'phing/tasks/system/AvailableTask.php';
 include_once 'phing/tasks/system/condition/Condition.php';
+include_once 'phing/parser/CustomChildCreator.php';
 
 /**
- *  Abstract baseclass for the <condition> task as well as several
- *  conditions - ensures that the types of conditions inside the task
- *  and the "container" conditions are in sync.
+ * Abstract baseclass for the <condition> task as well as several
+ * conditions - ensures that the types of conditions inside the task
+ * and the "container" conditions are in sync.
  * 
- *  @author  Hans Lellelid <hans@xmpl.org>
- *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright 2001,2002 THYRELL. All rights reserved
- *  @version   $Id$
- *  @package   phing.tasks.system.condition
+ * @author  Hans Lellelid <hans@xmpl.org>
+ * @author    Andreas Aderhold <andi@binarycloud.com>
+ * @copyright 2001,2002 THYRELL. All rights reserved
+ * @version   $Id: 4e5e33bd5784d9b68fab402fb7c75d980c2fbbf4 $
+ * @package   phing.tasks.system.condition
  */
-abstract class ConditionBase extends ProjectComponent implements IteratorAggregate {
+abstract class ConditionBase extends ProjectComponent
+    implements IteratorAggregate, CustomChildCreator {
         
     public $conditions = array(); // needs to be public for "inner" class access
 
@@ -149,6 +151,19 @@ abstract class ConditionBase extends ProjectComponent implements IteratorAggrega
         include_once 'phing/tasks/system/condition/ReferenceExistsCondition.php';
         $num = array_push($this->conditions, new ReferenceExistsCondition());
         return $this->conditions[$num-1];
+    }
+    
+    /**
+     * @param string $elementName
+     * @param Project $project
+     * @throws BuildException
+     * @return Condition
+     */
+    public function customChildCreator($elementName, Project $project)
+    {
+        $condition = $project->createCondition($elementName);
+        $num = array_push($this->conditions, $condition);
+        return $this->conditions[$num - 1];
     }
 
 }

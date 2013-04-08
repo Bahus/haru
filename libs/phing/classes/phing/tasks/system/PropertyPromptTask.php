@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: d2de9371732599b179facb97ef937b2cfbfbead2 $
+ *  $Id: cac8845ae2192d411a718ba149b71670c3102897 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,7 +20,7 @@
  */
 
 require_once 'phing/Task.php';
-include_once 'phing/system/io/ConsoleReader.php';
+include_once 'phing/input/InputRequest.php';
 
 /**
  * Deprecated task that uses console to prompt user for property values.
@@ -31,7 +31,7 @@ include_once 'phing/system/io/ConsoleReader.php';
  * 
  * @author    Hans Lellelid <hans@xmpl.org> (Phing)
  * @author    Anthony J. Young-Garner <ajyoung@alum.mit.edu> (Ant)
- * @version   $Id$
+ * @version   $Id: cac8845ae2192d411a718ba149b71670c3102897 $
  * @package   phing.tasks.system
  * @deprecated - in favor of the more capable InputTask
  */ 
@@ -89,13 +89,12 @@ class PropertyPromptTask extends Task {
                         
             $this->log("Prompting user for " . $this->propertyName . ". " . $this->getDefaultMessage(), Project::MSG_VERBOSE);
             
-            print "\n" . $this->promptText . " [" . $currentValue . "] " . $this->promptCharacter . " ";
-
-            /** future version should probably have hooks for validation of user input.*/
-            $reader = new ConsoleReader();
-            
+            $promptText = "\n" . $this->promptText . " [" . $currentValue . "] " . $this->promptCharacter . " ";
+    
             try {
-                $this->proposedValue  = $reader->readLine();
+                $request = new InputRequest($promptText);
+                $this->project->getInputHandler()->handleInput($request);
+                $this->proposedValue  = $request->getInput();
             } catch (IOException $e) {
                 $this->log("Prompt failed. Using default. (Failure reason: " . $e->getMessage().")");
                 $this->proposedValue = $this->defaultValue;

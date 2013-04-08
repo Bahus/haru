@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 3b31bb3e2c1ae122411833c67617e7cebf6967b8 $
+ *  $Id: b6862fa08ac29e45e028e0634ef7435761e10d40 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,7 +30,7 @@ include_once 'phing/UnknownElement.php';
  *
  * @author    Andreas Aderhold <andi@binarycloud.com>
  * @copyright 2001,2002 THYRELL. All rights reserved
- * @version   $Id: 3b31bb3e2c1ae122411833c67617e7cebf6967b8 $
+ * @version   $Id: b6862fa08ac29e45e028e0634ef7435761e10d40 $
  * @package   phing.parser
  */
 class TaskHandler extends AbstractHandler {
@@ -138,8 +138,11 @@ class TaskHandler extends AbstractHandler {
             print("Swallowing exception: ".$be->getMessage() . "\n");
         }
 
-        // the task is not known of bat, try to load it on thy fly
-        if ($this->task === null) {
+        // if the task is not known beforehand, wrap it
+        // in an UnknownElement object to enable runtime configuration
+        // NB: this is also done for ConditionBase objects to allow
+        // dynamic conditions without breaking BC for all tasks
+        if ($this->task === null || ($this->task instanceof TaskAdapter && $this->task->getProxy() instanceof ConditionBase && $this->target !== null)) {
             $this->task = new UnknownElement($tag);
             $this->task->setProject($project);
             $this->task->setTaskType($tag);

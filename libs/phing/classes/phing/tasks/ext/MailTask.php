@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 901fb0efa435ae78d249a50ed0e0f6e5d31e0d32 $
+ *  $Id: 73bc68bf5c60646fcf3b905d34cc2dc0f9d596f8 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +28,7 @@ include_once 'phing/Task.php';
  * 
  * @author   Michiel Rook <mrook@php.net>
  * @author   Francois Harvey at SecuriWeb (http://www.securiweb.net)
- * @version  $Id: 901fb0efa435ae78d249a50ed0e0f6e5d31e0d32 $
+ * @version  $Id: 73bc68bf5c60646fcf3b905d34cc2dc0f9d596f8 $
  * @package  phing.tasks.ext
  */
 class MailTask extends Task
@@ -56,7 +56,7 @@ class MailTask extends Task
                 throw new BuildException('Need the PEAR Mail_mime package to send attachments');
             }
             
-            $mime = new Mail_mime();
+            $mime = new Mail_mime(array('text_charset' => 'UTF-8'));
             $hdrs = array(
             	'From'    => $this->from,
             	'Subject' => $this->subject

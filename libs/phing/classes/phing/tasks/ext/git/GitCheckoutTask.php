@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: a1dcb809b44bfd34c3af154683dd2200c814e5f0 $
+ *  $Id: e53afe6034fcf9626effd77d6a2b84fed0c41c7e $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,7 +25,7 @@ require_once 'phing/tasks/ext/git/GitBaseTask.php';
  * Wrapper around git-checkout
  *
  * @author Victor Farazdagi <simple.square@gmail.com>
- * @version $Id: a1dcb809b44bfd34c3af154683dd2200c814e5f0 $
+ * @version $Id: e53afe6034fcf9626effd77d6a2b84fed0c41c7e $
  * @package phing.tasks.ext.git
  * @see VersionControl_Git
  * @since 2.4.3
@@ -118,7 +118,7 @@ class GitCheckoutTask extends GitBaseTask
         try {
             $output = $command->execute();
         } catch (Exception $e) {
-            throw new BuildException('Task execution failed.');
+            throw new BuildException('Task execution failed.', $e);
         }
 
         $this->log(

@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 27b94c44aa26823164ce02628de06ff8b44717f7 $
+ *  $Id: 3f33af215009e25b840efa512fc5673cf745b29c $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,7 +27,7 @@ require_once 'phing/tasks/ext/git/GitBaseTask.php';
  *
  * @author Evan Kaufman <evan@digitalflophouse.com>
  * @author Victor Farazdagi <simple.square@gmail.com>
- * @version $Id: 27b94c44aa26823164ce02628de06ff8b44717f7 $
+ * @version $Id: 3f33af215009e25b840efa512fc5673cf745b29c $
  * @package phing.tasks.ext.git
  * @see VersionControl_Git
  * @since 2.4.5
@@ -139,7 +139,7 @@ class GitLogTask extends GitBaseTask
         try {
             $output = $command->execute();
         } catch (Exception $e) {
-            throw new BuildException('Task execution failed');
+            throw new BuildException('Task execution failed', $e);
         }
 
         if (null !== $this->outputProperty) {

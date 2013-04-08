@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 88a8737d783614bcd5acb103738fafc23c509225 $
+ *  $Id: 8ce15d78f88cc64a7ba457fac2b7dea26aae6b87 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'phing/tasks/ext/git/GitBaseTask.php';
  * Wrapper aroung git-branch
  *
  * @author Victor Farazdagi <simple.square@gmail.com>
- * @version $Id: 88a8737d783614bcd5acb103738fafc23c509225 $
+ * @version $Id: 8ce15d78f88cc64a7ba457fac2b7dea26aae6b87 $
  * @package phing.tasks.ext.git
  * @see VersionControl_Git
  * @since 2.4.3
@@ -139,7 +139,7 @@ class GitBranchTask extends GitBaseTask
         try {
             $output = $command->execute();
         } catch (Exception $e) {
-            throw new BuildException('Task execution failed.');
+            throw new BuildException('Task execution failed.', $e);
         }
 
         $this->log(

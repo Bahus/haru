@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: ccfae0e7f76e6a02bfb20fc4b6f30eddf86d169f $
+ *  $Id: 43eeab8bf90dfca56552b4ad3d57d97bdee1acc9 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -39,7 +39,7 @@ include_once 'phing/system/io/FileSystem.php';
  *  - Error handling reduced to min, error are handled by PhingFile mainly
  *
  * @author    Andreas Aderhold, andi@binarycloud.com
- * @version   $Id$
+ * @version   $Id: 43eeab8bf90dfca56552b4ad3d57d97bdee1acc9 $
  * @package   phing.system.io
  */
 class UnixFileSystem extends FileSystem {
@@ -65,24 +65,13 @@ class UnixFileSystem extends FileSystem {
      * Check that the given pathname is normal.  If not, invoke the real
      * normalizer on the part of the pathname that requires normalization.
      * This way we iterate through the whole pathname string only once.
+     *
+     * NOTE: this method no longer expands the tilde (~) character!
      */
     function normalize($strPathname) {
         
         if (!strlen($strPathname)) {
             return;
-        }
-        
-        // Resolve home directories. We assume /home is where all home
-        // directories reside, b/c there is no other way to do this with
-        // PHP AFAIK.
-        if ($strPathname{0} === "~") {
-            if ($strPathname{1} === "/") { // like ~/foo => /home/user/foo
-                $strPathname = "/home/" . get_current_user() . substr($strPathname, 1);
-            } else { // like ~foo => /home/foo
-                $pos = strpos($strPathname, "/");
-                $name = substr($strPathname, 1, $pos - 2);
-                $strPathname = "/home/" . $name . substr($strPathname, $pos);
-            }
         }
 
         $n = strlen($strPathname);
@@ -137,7 +126,7 @@ class UnixFileSystem extends FileSystem {
      * string must be in normal form.
      */
     function prefixLength($pathname) {
-        if (strlen($pathname === 0)) {
+        if (strlen($pathname) === 0) {
             return 0;
         }
         return (($pathname{0} === '/') ? 1 : 0);

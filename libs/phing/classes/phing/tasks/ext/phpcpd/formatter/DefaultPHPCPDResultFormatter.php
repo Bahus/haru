@@ -19,7 +19,6 @@
  * <http://phing.info>.
  */
 
-require_once 'PHPCPD/TextUI/ResultPrinter.php';
 require_once 'phing/tasks/ext/phpcpd/formatter/PHPCPDResultFormatter.php';
 
 /**
@@ -35,14 +34,19 @@ class DefaultPHPCPDResultFormatter extends PHPCPDResultFormatter
     /**
      * Processes a list of clones.
      *
-     * @param PHPCPD_CloneMap $clones
+     * @param object $clones
      * @param Project $project
      * @param boolean $useFile
      * @param PhingFile|null $outfile
      */
-    public function processClones(PHPCPD_CloneMap $clones, Project $project, $useFile = false, $outFile = null)
+    public function processClones($clones, Project $project, $useFile = false, $outFile = null)
     {
-        $logger = new PHPCPD_TextUI_ResultPrinter();
+        if (get_class($clones) == 'PHPCPD_CloneMap') {
+            $logger = new PHPCPD_TextUI_ResultPrinter();
+        } else {
+            $logger = new \SebastianBergmann\PHPCPD\TextUI\ResultPrinter();
+        }
+
         // default format goes to logs, no buffering
         ob_start();
         $logger->printResult($clones, $project->getBaseDir(), true);

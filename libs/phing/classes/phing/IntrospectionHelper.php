@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: a5f2dbd71bafd2c363026d911132c3b47bf44239 $
+ *  $Id: f33d6ef40fb4caf6fa12b8f1db8977e33c0cd7eb $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,6 +23,7 @@
 include_once 'phing/types/Reference.php';
 include_once 'phing/types/Path.php';
 include_once 'phing/util/StringHelper.php';
+include_once 'phing/parser/CustomChildCreator.php';
 
 /**
  * Helper class that collects the methods that a task or nested element
@@ -37,7 +38,7 @@ include_once 'phing/util/StringHelper.php';
  * @author    Andreas Aderhold <andi@binarycloud.com>
  * @author    Hans Lellelid <hans@xmpl.org>
  * @copyright 2001,2002 THYRELL. All rights reserved
- * @version   $Id: a5f2dbd71bafd2c363026d911132c3b47bf44239 $
+ * @version   $Id: f33d6ef40fb4caf6fa12b8f1db8977e33c0cd7eb $
  * @package   phing
  */
 class IntrospectionHelper {
@@ -433,6 +434,14 @@ class IntrospectionHelper {
                 
                 $method->invoke($element, $nestedElement);
                                 
+            } catch (Exception $exc) {
+                throw new BuildException($exc);
+            }
+        } elseif ($this->bean->implementsInterface("CustomChildCreator")) {
+            $method = $this->bean->getMethod('customChildCreator');
+            
+            try {
+                $nestedElement = $method->invoke($element, strtolower($elementName), $project);
             } catch (Exception $exc) {
                 throw new BuildException($exc);
             }

@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: cdbb2883ab70c650896a465a872b3da30f13eb00 $
+ *  $Id: 10b4a94d7b4b5fd0c08de77c0d9fda898009dbde $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -29,7 +29,7 @@ include_once 'phing/util/StringHelper.php';
  * Encodes files using Zeng Guard Encoder
  *
  * @author    Petr Rybak <petr@rynawe.net>
- * @version   $Id: cdbb2883ab70c650896a465a872b3da30f13eb00 $
+ * @version   $Id: 10b4a94d7b4b5fd0c08de77c0d9fda898009dbde $
  * @package   phing.tasks.ext.zendguard
  * @since     2.4.3
  */
@@ -385,69 +385,69 @@ class ZendGuardEncodeTask extends MatchingTask
      */
     protected function prepareEncoderCommand()
     {
-        $command = $this->zendEncoderPath . " \\\n";
+        $command = $this->zendEncoderPath . " ";
 
         if (!empty($this->renameSourceExt)) {
-            $command .= " --rename-source " . $this->renameSourceExt . " \\\n";
+            $command .= " --rename-source " . $this->renameSourceExt . " ";
         } elseif ($this->deleteSource) {
             // delete source
-            $command .= " --delete-source \\\n";
+            $command .= " --delete-source ";
         }
 
         // short tags
-        $command .= " --short-tags " . (($this->shortTags) ? 'on' : 'off') . " \\\n";
+        $command .= " --short-tags " . (($this->shortTags) ? 'on' : 'off') . " ";
 
         // asp tags
-        $command .= " --asp-tags " . (($this->aspTags) ? 'on' : 'off') . " \\\n";
+        $command .= " --asp-tags " . (($this->aspTags) ? 'on' : 'off') . " ";
 
         // use crypto
         if ($this->useCrypto) {
-            $command .= " --use-crypto  \\\n";
+            $command .= " --use-crypto ";
         }
 
         // ignore file modes
         if ($this->ignoreFileModes) {
-            $command .= " --ignore-file-modes \\\n";
+            $command .= " --ignore-file-modes ";
         }
 
         // force encode
         if ($this->forceEncode) {
-            $command .= " --force-encode \\\n";
+            $command .= " --force-encode ";
         }
 
         // expires
         if (!empty($this->expires)) {
-            $command .= " --expires " . $this->expires . " \\\n";
+            $command .= " --expires " . $this->expires . " ";
         }
 
         // insert prolog file name or no-header
         if (!empty($this->prologFile)) {
-            $command .= " --prolog-filename " . $this->prologFile . " \\\n";
+            $command .= " --prolog-filename " . $this->prologFile . " ";
         } elseif ($this->noHeader) {
             // no-header
-            $command .= " --no-header \\\n";
+            $command .= " --no-header ";
         }
 
         // obfuscation level
         if ($this->obfuscationLevel > 0) {
-            $command .= " --obfuscation-level " . $this->obfuscationLevel . " \\\n";
+            $command .= " --obfuscation-level " . $this->obfuscationLevel . " ";
         }
 
         // encoded only
         if ($this->encodedOnly) {
-            $command .= " --encoded-only  \\\n";
+            $command .= " --encoded-only ";
         }
 
         // opt mask
         if (null !== $this->optMask) {
-            $command .= " --optimizations " . $this->optMask . " \\\n";
+            $command .= " --optimizations " . $this->optMask . " ";
         }
 
         // Signing or licensing
         if ($this->signProduct) {
-            $command .= " --sign-product " . $this->productName . " --private-key " . $this->privateKeyPath . " \\\n";
+            $command .= " --sign-product " . $this->productName . " --private-key " . $this->privateKeyPath . " ";
         } elseif ($this->licenseProduct) {
-            $command .= " --license-product " . $this->productName . " --private-key " . $this->privateKeyPath . " \\\n";
+            $command .= " --license-product " . $this->productName . " --private-key " . $this->privateKeyPath . " ";
         }
 
         // add a blank space

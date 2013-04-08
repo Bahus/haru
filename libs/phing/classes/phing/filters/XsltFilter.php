@@ -1,7 +1,7 @@
 <?php
 
 /*
- *  $Id: 057af49d450e4c137127acc0f5331368e7a76183 $
+ *  $Id: 18d625cd2fc1deaf10f714c5e797571bb6986d29 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,7 +31,7 @@ include_once 'phing/filters/ChainableReader.php';
  * @author    Hans Lellelid <hans@velum.net>
  * @author    Yannick Lecaillez <yl@seasonfive.com>
  * @author    Andreas Aderhold <andi@binarycloud.com>
- * @version   $Id: 057af49d450e4c137127acc0f5331368e7a76183 $
+ * @version   $Id: 18d625cd2fc1deaf10f714c5e797571bb6986d29 $
  * @see       FilterReader
  * @package   phing.filters
  */
@@ -261,6 +261,13 @@ class XsltFilter extends BaseParamFilterReader implements ChainableReader {
         
         $xslDom->loadxml($xsl);
         
+        if (defined('XSL_SECPREF_WRITE_FILE')) {
+            if (version_compare(PHP_VERSION,'5.4',"<")) {
+                ini_set("xsl.security_prefs", XSL_SECPREF_WRITE_FILE | XSL_SECPREF_CREATE_DIRECTORY);
+            } else {
+                $processor->setSecurityPrefs(XSL_SECPREF_WRITE_FILE | XSL_SECPREF_CREATE_DIRECTORY);
+            }
+        }
         $processor->importStylesheet($xslDom);
 
         // ignoring param "type" attrib, because

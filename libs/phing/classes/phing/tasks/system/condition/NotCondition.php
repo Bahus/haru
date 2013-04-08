@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: d8c985da7c759357135cf717b1f4b52a1bd50cb6 $
+ *  $Id: ef6fe783a698a1646e2c687c4cfa6c066129f6d7 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -22,16 +22,16 @@
 require_once 'phing/tasks/system/condition/ConditionBase.php';
 
 /**
- *  <not> condition.
+ * <not> condition.
  *
- *  Evaluates to true if the single condition nested into it is false
- *  and vice versa.
+ * Evaluates to true if the single condition nested into it is false
+ * and vice versa.
  *
- *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright 2001,2002 THYRELL. All rights reserved
- *  @version   $Id$
- *  @access    public
- *  @package   phing.tasks.system.condition
+ * @author    Andreas Aderhold <andi@binarycloud.com>
+ * @copyright 2001,2002 THYRELL. All rights reserved
+ * @version   $Id: ef6fe783a698a1646e2c687c4cfa6c066129f6d7 $
+ * @access    public
+ * @package   phing.tasks.system.condition
  */
 class NotCondition extends ConditionBase implements Condition {
 

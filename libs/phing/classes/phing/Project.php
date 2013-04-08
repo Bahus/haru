@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 7e67218e8e616860f9c746f9ab600f523089ea2e $
+ *  $Id: dcdbd4e3b1d33d6817c47b0b396f0708fb8cecf1 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -34,7 +34,7 @@ include_once 'phing/input/DefaultInputHandler.php';
  *
  * @author    Andreas Aderhold <andi@binarycloud.com>
  * @author    Hans Lellelid <hans@xmpl.org>
- * @version   $Id: 7e67218e8e616860f9c746f9ab600f523089ea2e $
+ * @version   $Id: dcdbd4e3b1d33d6817c47b0b396f0708fb8cecf1 $
  * @package   phing
  */
 class Project {
@@ -242,7 +242,7 @@ class Project {
      * @see #setProperty()
      */
     public function setUserProperty($name, $value) {
-        $this->log("Setting ro project property: " . $name . " -> " . $value, Project::MSG_DEBUG);
+        $this->log("Setting user project property: " . $name . " -> " . $value, Project::MSG_DEBUG);
         $this->userProperties[$name] = $value;
         $this->properties[$name] = $value;
     }
@@ -562,9 +562,9 @@ class Project {
         }  elseif (!isset($this->taskdefs[$name])) {
             Phing::import($class, $classpath);
             $this->taskdefs[$name] = $class;
-            $this->log("  +Task definiton: $name ($class)", Project::MSG_DEBUG);
+            $this->log("  +Task definition: $name ($class)", Project::MSG_DEBUG);
         } else {
-            $this->log("Task $name ($class) already registerd, skipping", Project::MSG_VERBOSE);
+            $this->log("Task $name ($class) already registered, skipping", Project::MSG_VERBOSE);
         }
     }
 
@@ -588,7 +588,7 @@ class Project {
             $this->typedefs[$typeName] = $typeClass;
             $this->log("  +User datatype: $typeName ($typeClass)", Project::MSG_DEBUG);
         } else {
-            $this->log("Type $typeName ($typeClass) already registerd, skipping", Project::MSG_VERBOSE);
+            $this->log("Type $typeName ($typeClass) already registered, skipping", Project::MSG_VERBOSE);
         }
     }
 
@@ -694,6 +694,46 @@ class Project {
         }
         // everything fine return reference
         return $task;
+    }
+    
+    /**
+     * Creates a new condition and returns the reference to it
+     *
+     * @param string $conditionType
+     * @return Condition
+     * @throws BuildException
+     */
+    public function createCondition($conditionType)
+    {
+        try {
+            $classname = "";
+            $tasklwr = strtolower($conditionType);
+            foreach ($this->typedefs as $name => $class) {
+                if (strtolower($name) === $tasklwr) {
+                    $classname = $class;
+                    break;
+                }
+            }
+
+            if ($classname === "") {
+                return null;
+            }
+
+            $cls = Phing::import($classname);
+
+            if (!class_exists($cls)) {
+                throw new BuildException("Could not instantiate class $cls, even though a class was specified. (Make sure that the specified class file contains a class with the correct name.)");
+            }
+
+            $o = new $cls();
+            if ($o instanceof Condition) {
+                return $o;
+            } else {
+                throw new BuildException("Not actually a condition");
+            }
+        } catch (Exception $e) {
+            throw new BuildException("Could not create condition of type: " . $conditionType, $e);
+        }
     }
 
     /**

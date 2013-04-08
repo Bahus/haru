@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 0cb3f51d8745f08b64f6f394fc0abb84705f512e $
+ *  $Id: d468183f331a26b26ed5b0a1ebd6197c79d326fc $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -189,6 +189,10 @@ class Win32FileSystem extends FileSystem {
      * @return string
      */
     function normalize($strPath) {
+        if ($this->_isPharArchive($strPath)) {
+            return str_replace('\\', '/', $strPath);
+        }
+    
         $n = strlen($strPath);
         $slash    = $this->slash;
         $altSlash = $this->altSlash;
@@ -213,6 +217,10 @@ class Win32FileSystem extends FileSystem {
     }
 
     function prefixLength($strPath) {
+        if ($this->_isPharArchive($strPath)) {
+            return 0;
+        }
+    
         $path  = (string) $strPath;
         $slash = (string) $this->slash;
         $n = (int) strlen($path);
@@ -315,6 +323,10 @@ class Win32FileSystem extends FileSystem {
     }
 
     /** private */
+    function _isPharArchive($strPath) {
+        return (strpos($strPath, 'phar://') === 0);
+    }
+    
     function _getDriveDirectory($drive) {
         $drive = (string) $drive{0};
         $i = (int) $this->_driveIndex($drive);
@@ -357,6 +369,9 @@ class Win32FileSystem extends FileSystem {
         }
 
         if ($pl === 0) {
+            if ($this->_isPharArchive($path)) {
+                return $path;
+            }
             return (string) ($this->_getUserPath().$this->slashify($path)); //Completely relative
         }
 
@@ -395,7 +410,7 @@ class Win32FileSystem extends FileSystem {
             return (string) $drive.':'.$this->slashify(substr($path,2)); //fake it
         }
         
-        throw new Exception("Unresolvable path: " . $path);
+        throw new InvalidArgumentException("Unresolvable path: " . $path);
     }
 
     /* -- most of the following is mapped to the functions mapped th php natives in FileSystem */

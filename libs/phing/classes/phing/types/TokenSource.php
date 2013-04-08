@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: 1bc91e925ce194c2e7a615e8f8c950d2057a9cb5 $
+ *  $Id: c4e8c9492a87ad77fea4b3cdcb9517c5a098159a $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -106,7 +106,7 @@ class TokenSource extends DataType {
      * @access  public
      */
     function getTokens() {
-        if ($this->tokens === null)
+        if (count($this->tokens) == 0)
             $this->Load();
 
         return $this->tokens;

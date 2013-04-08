@@ -1,7 +1,7 @@
 <?php
 
 /*
- * $Id: eaa0d6c5c7fb908d419cd6e22c7eccbf01506da7 $
+ * $Id: 949de39009f7a78374fe1925d30c23cc5c6cb7a8 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -34,7 +34,7 @@ include_once 'phing/types/Path.php';
  * </code>
  * 
  * @author    Hans Lellelid <hans@xmpl.org>
- * @version   $Id$
+ * @version   $Id: 949de39009f7a78374fe1925d30c23cc5c6cb7a8 $
  * @package   phing.tasks.system
  */
 class IncludePathTask extends Task {
@@ -95,15 +95,15 @@ class IncludePathTask extends Task {
     
         // Apparently casting to (string) no longer invokes __toString() automatically.
         if (is_object($this->classpath)) {
-            $this->classpath = $this->classpath->__toString();
+            $classpath = $this->classpath->__toString();
         }
         
-        if (empty($this->classpath)) {
+        if (empty($classpath)) {
             throw new BuildException("Provided classpath was empty.");
         }
         
         $curr_parts = explode(PATH_SEPARATOR, get_include_path());
-        $add_parts = explode(PATH_SEPARATOR, $this->classpath);
+        $add_parts = explode(PATH_SEPARATOR, $classpath);
         $new_parts = array_diff($add_parts, $curr_parts);
         
         if ($new_parts) {

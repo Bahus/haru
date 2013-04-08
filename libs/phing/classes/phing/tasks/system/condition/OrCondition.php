@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: adcd6785a85304a0860cc3dd9a0146d965c1cb0c $
+ *  $Id: 4e611b70483f48b8983bcbcd583f6b845a99ef4a $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -22,16 +22,16 @@
 require_once 'phing/tasks/system/condition/ConditionBase.php';
 
 /**
- *  <or> condition container.
+ * <or> condition container.
  *
- *  Iterates over all conditions and returns true as soon as one
- *  evaluates to true.
+ * Iterates over all conditions and returns true as soon as one
+ * evaluates to true.
  *
- *  @author    Andreas Aderhold <andi@binarycloud.com>
- *  @copyright  2001,2002 THYRELL. All rights reserved
- *  @version   $Id$
- *  @access    public
- *  @package   phing.tasks.system.condition
+ * @author    Andreas Aderhold <andi@binarycloud.com>
+ * @copyright  2001,2002 THYRELL. All rights reserved
+ * @version   $Id: 4e611b70483f48b8983bcbcd583f6b845a99ef4a $
+ * @access    public
+ * @package   phing.tasks.system.condition
  */
 class OrCondition extends ConditionBase implements Condition {
 

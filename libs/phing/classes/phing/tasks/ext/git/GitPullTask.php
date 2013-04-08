@@ -1,6 +1,6 @@
 <?php
 /*
- *  $Id: f96a4faad59ab1b29abccd59d04269fe0c409084 $
+ *  $Id: b87593e0f31239277d8aee7440f0dfb7c5b89d30 $
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +26,7 @@ require_once 'phing/tasks/ext/git/GitBaseTask.php';
  * Wrapper aroung git-pull
  *
  * @author Victor Farazdagi <simple.square@gmail.com>
- * @version $Id: f96a4faad59ab1b29abccd59d04269fe0c409084 $
+ * @version $Id: b87593e0f31239277d8aee7440f0dfb7c5b89d30 $
  * @package phing.tasks.ext.git
  * @see VersionControl_Git
  * @since 2.4.3
@@ -187,7 +187,7 @@ class GitPullTask extends GitBaseTask
         try {
             $output = $command->execute();
         } catch (Exception $e) {
-            throw new BuildException('Task execution failed.');
+            throw new BuildException('Task execution failed.', $e);
         }
 
         $this->log('git-pull: complete', Project::MSG_INFO); 

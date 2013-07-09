@@ -96,6 +96,7 @@ class ReleaseHistory
 		$items = $this->load();
 		$itemsForDelete = array();
 
+		$result = array();
 		foreach ( $this->_config->libs->children() as $lib )
 		{
 			$deployType = empty( $lib->deploy->type ) ? 'none' : strval( $lib->deploy->type );
@@ -106,10 +107,10 @@ class ReleaseHistory
 				continue;
 			}
 
-			$this->_delete( $lib, $items, $keepOldVersions );
+			$result[ $lib->getName() ] = $this->_delete( $lib, $items, $keepOldVersions );
 		}
-
 		$this->_save( $items );
+        return $result;
 	}
 
 	private function _delete( SimpleXMLElement $lib, &$items, $keepOldVersions )
@@ -138,10 +139,12 @@ class ReleaseHistory
 				}
 				else
 				{
-					$deleteHelper->setCommand( 'rm -r ' . escapeshellarg( $dst ) );
+					$deleteHelper->setCommand( 'rm -rf ' . escapeshellarg( $dst ) );
 				}
 				$deleteHelper->main();
 				unset( $items[ $libName ][ $tag ] );
+
+				$res[] = $dst;
 			}
 		}
 

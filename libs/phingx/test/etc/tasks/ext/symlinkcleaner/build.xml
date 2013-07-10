@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<project name="Lib Item Test" default="build">
+    <taskdef name="symlinkcleaner" classname="phing.tasks.ext.SymlinkCleanerTask" />
+    <target name="build">
+    </target>
+    <target name="test1">
+        <mkdir dir="${tmp.dir}/tag1" />
+        <symlink target="${tmp.dir}/tag1" link="${tmp.dir}/symlink_tag1" />
+        <symlink target="${tmp.dir}/tag2" link="${tmp.dir}/symlink_tag2" />
+        <symlinkcleaner dir="${tmp.dir}" />
+    </target>
+</project>

@@ -32,9 +32,6 @@ class LibItemTest extends BuildFileTest
 
 	/**
 	 *
-	 *
-	 *
-	 *
 	 * @dataProvider providerTestLibItem
 	 *
 	 * @param unknown_type $num

@@ -94,8 +94,16 @@ class LibDeployTask extends Task
 
 					$filename = sprintf( '%s/%s', $fullPath, $file );
 					$config = simplexml_load_file( $filename );
-					$this->_initDeployParams( $name, $config );
-					$this->_deployItem( $name, $config );
+                    if ( $config->deploy )
+                    {
+					    $this->_initDeployParams( $name, $config );
+					    $this->_deployItem( $name, $config );
+                    }
+                    else
+                    {
+                        $msg = sprintf( "\tDeploy section not found", $name );
+                        $this->log( $msg );
+                    }
 				}
 			}
 			catch ( BuildException $be )

@@ -158,8 +158,11 @@ class LibConfigureTask extends Task
 			foreach ( $children as $item )
 			{
 				$name = $item->getName();
-				$libDName = ( string ) $item;
-				$data[ 'libs' ][] = $this->_makeDependItem( $libDName );
+                $libName = ( string ) $item;
+                if ( $this->_configXml->libs->$libName->deploy )
+                {
+				    $data[ 'libs' ][] = $this->_makeDependItem( $libName );
+                }
 			}
 
 			$res = Tools::saveToPhp( $libConfigFilename, $data );

@@ -55,24 +55,50 @@ class Configure_Slice
 
 		$result = array();
 		$libsList = self::getLibPathList( $xml->libs );
+
 		foreach ( $libsList as $libName => $libDir )
 		{
-			$config = clone $xml->libs->$libName;
-			unset( $config->configure );
-			unset( $config->link );
-			if ( $config->modules )
-			{
-				$modules = clone $config->modules;
-				unset( $config->modules );
-				foreach ( ( array ) $modules->children() as $node )
-				{
-					$this->_sxmlAppend( $config, $node );
-				}
-			}
-			$result[ $libName ] = $this->_generateSlice( $libDir . '/data', $config );
+		    foreach ( $xml->libs->children() as $lib )
+		    {
+		        $subLibName = $lib->getName();
+		        $filename = 'config';
+		        if ( $libName != $subLibName )
+		        {
+		            $filename .= '_' . strtolower( $subLibName );
+		        }
+
+		        // --- dump ---
+		        echo __FILE__ . __METHOD__ . chr( 10 );
+		        var_dump( $subLibName ) . chr( 10 );
+		        // --- // ---
+
+		        $config = $this->_getModules( $lib );
+		        $result[ $subLibName ] = $this->_generateSlice( $libDir . '/data', $config, $filename );
+		    }
 			$result[ $libName . '_main' ] = $this->_generateSlice( $libDir . '/data', $this->_xmlMainConfig, 'config_main' );
 		}
 		return $result;
+	}
+
+	protected function _getModules( $lib )
+	{
+	    $config = clone $lib;
+	    unset( $config->configure );
+	    unset( $config->link );
+	    if ( $config->modules )
+	    {
+	        $modules = clone $config->modules;
+	        unset( $config->modules );
+	        foreach ( ( array ) $modules->children() as $node )
+	        {
+	            $this->_sxmlAppend( $config, $node );
+	        }
+	    }
+	    else
+	    {
+	        $config = null;
+	    }
+	    return $config;
 	}
 
 	protected function _sxmlAppend( SimpleXMLElement $to, SimpleXMLElement $from )

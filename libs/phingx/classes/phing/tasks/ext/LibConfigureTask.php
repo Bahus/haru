@@ -163,6 +163,11 @@ class LibConfigureTask extends Task
                 {
 				    $data[ 'libs' ][] = $this->_makeDependItem( $libName );
                 }
+                else
+                {
+                    $msg = sprintf( "\tDeploy section for lib (%s) not found", $libName );
+                    $this->log( $msg );
+                }
 			}
 
 			$res = Tools::saveToPhp( $libConfigFilename, $data );

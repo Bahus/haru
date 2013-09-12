@@ -140,7 +140,6 @@ class LibConfigureTask extends Task
 		$this->log( $msg );
 
 		$children = $this->_configXml->libs->children();
-
 		if ( count( $children ) )
 		{
 			$mainConfigFilename =  $libDst . '/data/config_main.php';
@@ -149,8 +148,6 @@ class LibConfigureTask extends Task
 			$data[ 'project_root' ] = $projectRootDir;
 			$data[ 'main_config_filename' ] = $mainConfigFilename;
 			$data[ 'libs' ] = array();
-
-			$data[ 'libs' ][] = $this->_makeDependItem( $libName );
 
 			foreach ( $children as $item )
 			{

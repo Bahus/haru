@@ -80,11 +80,8 @@ class LibConfigureTask extends Task
 					$this->_processFiles( $lib->configure->files );
 				}
 
-				if ( $lib->configure->depends )
-				{
-					$libDst = ( string ) $lib->deploy->dst;
-					$this->_processDepends( $libName, $lib->configure->depends, $libDst );
-				}
+				$libDst = ( string ) $lib->deploy->dst;
+				$this->_processDepends( $libName, $libDst );
 			}
 		}
 
@@ -134,7 +131,7 @@ class LibConfigureTask extends Task
 		}
 	}
 
-	protected function _processDepends( $libName, $depends, $libDst )
+	protected function _processDepends( $libName, $libDst )
 	{
 		$projectRootDir = trim( ( string ) $this->_configXml->paths->root );
 		$dataDir = trim( ( string ) $this->_configXml->paths->data );
@@ -142,12 +139,12 @@ class LibConfigureTask extends Task
 		$msg = sprintf( "\tProcess depends" );
 		$this->log( $msg );
 
-		$children = $depends->children();
+		$children = $this->_configXml->libs->children();
+
 		if ( count( $children ) )
 		{
 			$mainConfigFilename =  $libDst . '/data/config_main.php';
 			$libConfigFilename = $libDst . '/data/config_map.php';
-
 			$data = array();
 			$data[ 'project_root' ] = $projectRootDir;
 			$data[ 'main_config_filename' ] = $mainConfigFilename;
@@ -157,8 +154,7 @@ class LibConfigureTask extends Task
 
 			foreach ( $children as $item )
 			{
-				$name = $item->getName();
-                $libName = ( string ) $item;
+				$libName = $item->getName();
                 if ( $this->_configXml->libs->$libName->deploy )
                 {
 				    $data[ 'libs' ][] = $this->_makeDependItem( $libName );

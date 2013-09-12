@@ -66,12 +66,6 @@ class Configure_Slice
 		        {
 		            $filename .= '_' . strtolower( $subLibName );
 		        }
-
-		        // --- dump ---
-		        echo __FILE__ . __METHOD__ . chr( 10 );
-		        var_dump( $subLibName ) . chr( 10 );
-		        // --- // ---
-
 		        $config = $this->_getModules( $lib );
 		        $result[ $subLibName ] = $this->_generateSlice( $libDir . '/data', $config, $filename );
 		    }

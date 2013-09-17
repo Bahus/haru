@@ -140,7 +140,7 @@
 
 	<target
 		name="properties-promt"
-		depends="properties-build-type,properties-build-user">
+		depends="properties-build-type,properties-build-user,properties-build-branch">
 		<echo>Build type is "${build.type}"</echo>
 		<if>
 			<isset property="build.user" />
@@ -151,6 +151,7 @@
 				<echo>No build user</echo>
 			</else>
 		</if>
+        <echo>Build branch is "${build.branch}"</echo>
 	</target>
 
 	<target name="properties-build-type">
@@ -310,4 +311,21 @@
 			</then>
 		</if>		
 	</target>
+    
+    <target name="properties-build-branch">
+        <echo>Initialization property build.branch</echo>       
+        <if>
+            <isset property="bb" />
+            <then>
+                <property
+                    name="build.branch"
+                    value="${bu}" />
+            </then>
+            <else>
+                <property
+                    name="build.branch"
+                    value="" />
+            </else>
+        </if>       
+    </target>
 </project>

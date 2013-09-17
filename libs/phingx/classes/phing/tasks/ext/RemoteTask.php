@@ -79,6 +79,11 @@ class RemoteTask extends Task
 		{
 			$commandAr[] = sprintf( '-Dbu=%s', $buildUser );
 		}
+		$buildBranch = $this->getProject()->getProperty( 'build.branch' );
+		if ( $buildBranch )
+		{
+		    $commandAr[] = sprintf( '-Dbb=%s', $buildBranch );
+		}
 
 		foreach ( $this->_ips as $ip )
 		{

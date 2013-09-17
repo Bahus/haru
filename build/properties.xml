@@ -319,13 +319,13 @@
             <then>
                 <property
                     name="build.branch"
-                    value="${bu}" />
+                    value="${bb}" />
             </then>
             <else>
                 <property
                     name="build.branch"
                     value="" />
             </else>
-        </if>       
+        </if>
     </target>
 </project>

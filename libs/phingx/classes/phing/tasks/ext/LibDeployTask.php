@@ -1,4 +1,6 @@
 <?php
+use Demo\Example\implode;
+
 require_once 'phing/Task.php';
 require_once 'phing/tasks/system/ExecTask.php';
 
@@ -362,6 +364,16 @@ class LibDeployTask extends Task
 		$replace = sprintf( '$1://%s$2', $inner );
 		$repositoryUrlSecure = preg_replace(
 			'/(http|https|ssh|hb|git):\/\/(.*)/i', $replace, $repositoryUrl );
+		$auth = array();
+		if ( $this->_username )
+		{
+		    $auth[] = sprintf( '--config repo.username="%s"', $this->_username );
+		}
+		if ( $this->_password )
+		{
+		    $auth[] = sprintf( '--config repo.password="%s"', $this->_password );
+		}
+		$auth = implode( ' ', $auth );
 
 		$branch = $this->_tag;
 
@@ -376,7 +388,7 @@ class LibDeployTask extends Task
 			$toDir . '/.hg' ) )
 		{
 			$branchSuffix = empty( $branch ) ? '' : sprintf( ' -r %s', $branch );
-			$command = sprintf( '%s pull -u %s', $bin, $branchSuffix );
+			$command = sprintf( '%s %s pull -u %s', $bin, $auth, $branchSuffix );
 
 			$this->_exec( $command, $returnProp, $outputProp, $toDir );
 		}

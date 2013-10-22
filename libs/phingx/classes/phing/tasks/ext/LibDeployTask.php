@@ -367,11 +367,16 @@ class LibDeployTask extends Task
 		$auth = array();
 		if ( $this->_username )
 		{
-		    $auth[] = sprintf( '--config repo.username="%s"', $this->_username );
+		    $auth[] = sprintf( '--config auth.repo.username="%s"', $this->_username );
 		}
 		if ( $this->_password )
 		{
-		    $auth[] = sprintf( '--config repo.password="%s"', $this->_password );
+		    $auth[] = sprintf( '--config auth.repo.password="%s"', $this->_password );
+		}
+		if ( !empty( $auth ) )
+		{
+		    $ar = parse_url( $repositoryUrl );
+		    array_unshift( $auth, sprintf( '--config auth.repo.prefix="%s"', $ar['scheme'] . '://' . $ar['host'] ) );
 		}
 		$auth = implode( ' ', $auth );
 

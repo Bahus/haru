@@ -1,4 +1,6 @@
 <?php
+use Demo\Example\array_key_exists;
+
 require_once 'phing/BuildException.php';
 require_once 'phing/util/Converter.php';
 /**
@@ -64,7 +66,15 @@ class Configure_Slice
                 if ( $config )
                 {
                     $this->_sxmlAppend( $config, $xmlConfigFilenameList );
-                    $result[ $subLibName ] = $this->_generateSlice( $libDir . '/data', $config, $filename );
+                    $tmp = $this->_generateSlice( $libDir . '/data', $config, $filename );
+                    if ( $subLibName && array_key_exists($subLibName, $result))
+                    {
+                        $result[ $subLibName ] = array_merge( $result[ $subLibName ], $tmp );
+                    }
+                    else
+                    {
+                        $result[ $subLibName ] = $tmp;
+                    }
                 }
             }
             $result[ $libName . '_main' ] = $this->_generateSlice( $libDir . '/data', $this->_xmlMainConfig, 'config_main' );

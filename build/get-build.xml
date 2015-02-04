@@ -125,7 +125,7 @@
 			</else>
 		</if>
 		
-		<exec command="whoami" outputProperty="get-build.username"></exec>		
+		<exec command="whoami" outputProperty="get-build.username"/>
 		<property name="get-build.user.property.filename"
 			value="${get-build.deploy.dst}/properties/extends/users/${build.username}.xml" />
 	</target>
@@ -181,10 +181,15 @@
         <chmod file="${get-build.deploy.dst}/bin/phing" mode="0555" />
         
         <copy file="${build.tmpldir.build}/bin/prop" tofile="${get-build.deploy.dst}/bin/prop" />
-        <propertyprompt propertyName="get-build.deploy.setup"
-            promptText="Setup project? (yes or no)"
-            useExistingValue="1" 
-            defaultValue="1" />
+        <if>
+            <isset property="get-build.deploy.setup" />
+            <else>
+                <propertyprompt propertyName="get-build.deploy.setup"
+                    promptText="Setup project? (yes or no)"
+                    useExistingValue="1"
+                    defaultValue="1" />
+            </else>
+        </if>
         <property name="get-build.deploy.setup.command" value="${get-build.deploy.dst}/bin/phing install configure link" />
         <if>
             <istrue value="${get-build.deploy.setup}" />
